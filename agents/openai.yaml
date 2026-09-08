@@ -1,0 +1,4 @@
+interface:
+  display_name: Parallel Subagent Planner
+  short_description: Split decision, disjoint scopes, dependency order, and child prompts for parallel subagents.
+  default_prompt: Decide whether parallel subagents help; plan lanes only when scopes are clear and disjoint.
