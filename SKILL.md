@@ -6,7 +6,7 @@ description: >-
   not for routine single-thread edits.
 ---
 
-# Parallel Subagent Planner (v0.6.3)
+# Parallel Subagent Planner (v0.6.5)
 
 Router for deciding whether subagents help, isolating file scopes, ordering dependencies, and writing child prompts. Details live in `references/`.
 
@@ -41,12 +41,14 @@ Read [references/child-prompts.md](references/child-prompts.md) for prompt templ
 
 ## 4. Output
 
-Return:
+Return a [plan artifact](references/plan-artifact-template.md) when the user should review scope before spawn; otherwise return the same fields inline:
 
 - **Decision**: direct execution, investigate first, or parallel subagents — one brief reason.
 - **Order**: work that must finish before parallel work starts.
 - **Subagents**: per lane — Goal, Read, Write, Ignore, Acceptance (one directed command).
 - **Integration**: merge steps plus verification scope for the main thread (see §5).
+
+**Cursor users:** read [references/cursor-task-prompt.md](references/cursor-task-prompt.md) for `Task` / `subagent_type` / parallel spawn rules.
 
 ## 5. Main Thread Integration
 

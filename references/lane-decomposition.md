@@ -30,3 +30,18 @@ When subagents depend on a shared API route, database schema, migration, or conf
    1. The owner completes the shared contract changes.
    2. The main thread reviews and accepts that stable version.
    3. Dependent subagents may then read it, but must not modify it.
+
+---
+
+## 4. Replan Triggers
+
+When parallel work goes wrong, **stop dependent lanes** and replan only the affected scope. Do not restart the entire plan from scratch unless boundaries were fundamentally wrong.
+
+| Trigger | Action |
+|---------|--------|
+| **Scope violation** — subagent edited outside its `Write` path | Stop that lane and any lane that depended on its output. Main thread reverts or fixes the overrun, then replan **only** the violated lane (and dependents). |
+| **Shared file conflict** — two lanes need the same DTO, schema, migration, or root entry doc | Merge into **one owner** lane (or main thread). Other lanes become read-only consumers of the stable contract. |
+| **Lane failure** — subagent error, timeout, or incomplete Acceptance | Stop dependent lanes immediately. Do not let siblings continue writing against stale assumptions. Replan the failed lane; resume dependents only after main thread accepts the fix. |
+| **Overlapping Read during concurrent write** — lane B read files lane A is still mutating | Pause B until A's contract is merged and accepted, or narrow B's Read to stable paths only. |
+
+**Replan output** should state: what failed, which lanes stop, which single owner takes the shared file, and the minimal Acceptance to re-enter parallel work.

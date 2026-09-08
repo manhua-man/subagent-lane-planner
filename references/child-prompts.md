@@ -99,5 +99,5 @@ Do not modify contract specifications or workspace source code without explicit 
 | Host | Spawn mechanism | Persistent role |
 |------|-----------------|-----------------|
 | Codex | subagent / custom agent | `.codex/agents/<name>.toml` |
-| Cursor | `Task` tool + `subagent_type`; optional `model` from host list | project or user agent config per Cursor docs |
+| Cursor | `Task` tool + `subagent_type`; optional `model` from host list | See [cursor-task-prompt.md](cursor-task-prompt.md) |
 | Claude Code | Task / subagent per host docs | `.claude/agents/` per host docs |

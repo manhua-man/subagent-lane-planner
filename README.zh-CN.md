@@ -1,26 +1,52 @@
-# parallel-subagent-planner (v0.6.3)
+# parallel-subagent-planner (v0.6.5)
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-`parallel-subagent-planner` 是一个轻量级的 **Agent Planning Harness Skill**，帮助 Codex 在编码任务中决策何时使用子 Agent、构建安全的文件作用域边界、安排依赖先后顺序、生成干练的子 Agent 提示词，并发现可复用的长期 Agent 角色。
+`parallel-subagent-planner` 是一个轻量级的 **Agent Planning Harness Skill**，用于决策何时使用子 Agent、构建安全的文件作用域边界、安排依赖顺序、生成子 Agent 提示词，以及在 lane 失败时恢复。
 
 ---
 
 ## 核心功能
 
-- **拆分决策**：评估并行子 Agent 是否能真正节省时间，或是否需要先行只读探索降低风险，否则优先主线程直接执行。
-- **文件隔离**：保证并行子 Agent 修改完全独立的文件范围 (`write(A) ∩ write(B) = ∅`)，绝不相互覆盖代码。
-- **执行先后顺序**：指定共享契约文件由唯一所有者（主线程或某个子 Agent）优先完成修改，再解锁依赖它的下游只读消费。
-- **干练提示词**：生成包含目标、文件读写边界、忽略范围和客观验证命令的子 Agent Prompt。
-- **主线程整合**：由主线程合并子 Agent 产物，并按改动范围做相称验证（默认不全仓 CI）。
-- **长期 Agent 沉淀**：当存在显式重复使用证据时，提示用户并在获得批准后保存为 `.codex/agents/<name>.toml`。
+- **拆分决策**：评估并行是否真能节省时间，或是否需要先只读探索；否则主线程直接执行。
+- **文件隔离**：并行子 Agent 的写范围互不重叠 (`write(A) ∩ write(B) = ∅`)。
+- **执行顺序**：共享契约文件由唯一 owner 先完成，下游再只读消费。
+- **干练提示词**：目标、读写边界、一条定向 Acceptance 命令。
+- **规划产物**：可选 markdown 模板，spawn 前给用户审 scope。
+- **主线程整合**：按改动范围验证，默认不全仓 CI。
+- **Replan 触发**：越界、共享文件冲突、lane 失败时停依赖 lane，只重规划受影响部分。
+- **长期 Agent**：重复角色可建议保存为宿主专用 agent 配置，须用户批准。
+
+---
+
+## 怎么触发
+
+先安装（见 [安装方式](#安装方式)），再在**大范围或并行**任务时使用，不要用于改单个文件。
+
+### Cursor
+
+1. 安装到 `~/.agents/skills/parallel-subagent-planner/` 或 `<仓库>/.agents/skills/parallel-subagent-planner/`。
+2. 在目标仓库**新开对话**，说：*「用 parallel-subagent-planner 规划这个任务的并行子 agent」*。
+3. 规划产物确认后，用 `Task` 工具 spawn — 见 `references/cursor-task-prompt.md`（**同一条消息**里发多个并行 Task）。
+
+### Codex
+
+1. 安装到 `~/.agents/skills/parallel-subagent-planner/` 或工作区 `.agents/skills/`。
+2. 说：*「Decide whether subagents help; plan lanes only when scopes are disjoint.」*（与 `agents/openai.yaml` 默认提示一致）。
+3. 按 lane  spawn 子 agent；重复角色写入 `.codex/agents/<name>.toml` 须先获用户同意。
+
+### Claude Code
+
+1. 按你的环境复制到 `~/.claude/skills/` 或项目 `.claude/skills/`。
+2. 说：*「Read parallel-subagent-planner and output a plan artifact before spawning subagents.」*
+3. 用 Claude Code 的 Task/子 agent 机制，按规划里的 `Read`/`Write` 块执行。
 
 ---
 
 ## 核心循环
 
 ```text
-Decide ➔ Split ➔ Isolate ➔ Order ➔ Prompt ➔ Integrate
+Decide ➔ Split ➔ Isolate ➔ Order ➔ Prompt ➔ Integrate ➔ Replan（如需）
 ```
 
 ---
@@ -33,23 +59,25 @@ parallel-subagent-planner/
 ├─ agents/
 │  └─ openai.yaml                    # Codex 元数据配置
 ├─ references/
-│  ├─ lane-decomposition.md          # 任务切分、文件隔离与执行先后顺序
-│  └─ child-prompts.md               # 子 Agent Prompt 模板与自定义 Agent 保存建议
-├─ README.md                         # 英文说明文档
-├─ README.zh-CN.md                   # 中文说明文档
-├─ CHANGELOG.md                      # Release 版本历史
-└─ LICENSE                           # MIT 开源协议
+│  ├─ lane-decomposition.md          # 切分、隔离、契约、Replan 触发
+│  ├─ child-prompts.md               # 子 Agent 模板与宿主模型指引
+│  ├─ cursor-task-prompt.md          # Cursor Task：subagent_type、模型、真并行
+│  └─ plan-artifact-template.md      # spawn 前可选审阅的 markdown 模板
+├─ README.md
+├─ README.zh-CN.md
+├─ CHANGELOG.md
+└─ LICENSE
 ```
 
 ---
 
-**用法：** 按需 skill，仅在规划并行子 Agent 时使用。不要写入仓根 `AGENTS.md` 作为必跑门禁。
+**用法：** 按需 skill。不要写入仓根 `AGENTS.md` 作为必跑门禁。
 
 ---
 
 ## 安装方式
 
-### 个人技能安装 (Personal Skill Installation)
+### 个人安装
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
@@ -58,12 +86,13 @@ git clone --depth 1 \
   "$HOME/.agents/skills/parallel-subagent-planner"
 ```
 
-### 项目 Workspace 安装 (Project Workspace Installation)
+### 项目 Workspace 安装
 
-复制仓库内容至目标项目：
-
-```text
-<target-repo>/.agents/skills/parallel-subagent-planner/
+```bash
+mkdir -p "<target-repo>/.agents/skills"
+git clone --depth 1 \
+  https://github.com/manhua-man/codex-parallel-subagent-planner.git \
+  "<target-repo>/.agents/skills/parallel-subagent-planner"
 ```
 
 ---
