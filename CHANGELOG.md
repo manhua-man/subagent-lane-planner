@@ -1,6 +1,15 @@
 # Changelog
 
-All notable changes to the `parallel-subagent-planner` skill will be documented in this file.
+All notable changes to the `subagent-lane-planner` skill will be documented in this file.
+
+## [v0.7.0] - 2026-09-08
+
+### Rename — skill, repository, and install paths
+- **Skill `name`**: `parallel-subagent-planner` → `subagent-lane-planner`
+- **GitHub repository**: `codex-parallel-subagent-planner` → `subagent-lane-planner` (old URL redirects)
+- **Install directory**: `~/.agents/skills/subagent-lane-planner/` or `<repo>/.agents/skills/subagent-lane-planner/`
+- **Release zip**: `subagent-lane-planner-v0.7.0.zip`
+- Display name and trigger phrases updated; skill behavior unchanged from v0.6.5
 
 ## [v0.6.5] - 2026-09-08
 

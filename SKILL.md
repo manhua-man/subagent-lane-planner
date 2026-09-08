@@ -1,12 +1,12 @@
 ---
-name: parallel-subagent-planner
+name: subagent-lane-planner
 description: >-
-  Plan parallel subagent execution: split decision, disjoint write scopes,
-  dependency order, or child prompts. Use when orchestrating multiple subagents,
-  not for routine single-thread edits.
+  Plan subagent lanes: split decision, disjoint write scopes, dependency order,
+  or child prompts. Use when orchestrating multiple subagents, not for routine
+  single-thread edits.
 ---
 
-# Parallel Subagent Planner (v0.6.5)
+# Subagent Lane Planner (v0.7.0)
 
 Router for deciding whether subagents help, isolating file scopes, ordering dependencies, and writing child prompts. Details live in `references/`.
 

@@ -1,15 +1,17 @@
-# parallel-subagent-planner (v0.6.5)
+# subagent-lane-planner (v0.7.0)
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-`parallel-subagent-planner` 是一个轻量级的 **Agent Planning Harness Skill**，用于决策何时使用子 Agent、构建安全的文件作用域边界、安排依赖顺序、生成子 Agent 提示词，以及在 lane 失败时恢复。
+`subagent-lane-planner` 是一个轻量级的 **Agent Planning Harness Skill**，用于决策何时切分子 Agent lane、构建安全的文件作用域边界、安排依赖顺序、生成子 Agent 提示词，以及在 lane 失败时恢复。
+
+> **曾用名：** `parallel-subagent-planner`，仓库 `codex-parallel-subagent-planner`（GitHub 会重定向到本仓库）。
 
 ---
 
 ## 核心功能
 
-- **拆分决策**：评估并行是否真能节省时间，或是否需要先只读探索；否则主线程直接执行。
-- **文件隔离**：并行子 Agent 的写范围互不重叠 (`write(A) ∩ write(B) = ∅`)。
+- **拆分决策**：评估 lane 是否真能节省时间，或是否需要先只读探索；否则主线程直接执行。
+- **文件隔离**：lane 写范围互不重叠 (`write(A) ∩ write(B) = ∅`)。
 - **执行顺序**：共享契约文件由唯一 owner 先完成，下游再只读消费。
 - **干练提示词**：目标、读写边界、一条定向 Acceptance 命令。
 - **规划产物**：可选 markdown 模板，spawn 前给用户审 scope。
@@ -21,24 +23,24 @@
 
 ## 怎么触发
 
-先安装（见 [安装方式](#安装方式)），再在**大范围或并行**任务时使用，不要用于改单个文件。
+先安装（见 [安装方式](#安装方式)），再在**大范围或多 lane** 任务时使用，不要用于改单个文件。
 
 ### Cursor
 
-1. 安装到 `~/.agents/skills/parallel-subagent-planner/` 或 `<仓库>/.agents/skills/parallel-subagent-planner/`。
-2. 在目标仓库**新开对话**，说：*「用 parallel-subagent-planner 规划这个任务的并行子 agent」*。
-3. 规划产物确认后，用 `Task` 工具 spawn — 见 `references/cursor-task-prompt.md`（**同一条消息**里发多个并行 Task）。
+1. 安装到 `~/.agents/skills/subagent-lane-planner/` 或 `<仓库>/.agents/skills/subagent-lane-planner/`。
+2. 在目标仓库**新开对话**，说：*「用 subagent-lane-planner 规划这个任务的子 agent lane」*。
+3. 规划产物确认后，用 `Task` 工具 spawn — 见 `references/cursor-task-prompt.md`（**同一条消息**里发多个 Task）。
 
 ### Codex
 
-1. 安装到 `~/.agents/skills/parallel-subagent-planner/` 或工作区 `.agents/skills/`。
-2. 说：*「Decide whether subagents help; plan lanes only when scopes are disjoint.」*（与 `agents/openai.yaml` 默认提示一致）。
-3. 按 lane  spawn 子 agent；重复角色写入 `.codex/agents/<name>.toml` 须先获用户同意。
+1. 安装到 `~/.agents/skills/subagent-lane-planner/` 或工作区 `.agents/skills/`。
+2. 说：*「Decide whether subagent lanes help; plan only when scopes are clear and disjoint.」*（与 `agents/openai.yaml` 默认提示一致）。
+3. 按 lane spawn 子 agent；重复角色写入 `.codex/agents/<name>.toml` 须先获用户同意。
 
 ### Claude Code
 
 1. 按你的环境复制到 `~/.claude/skills/` 或项目 `.claude/skills/`。
-2. 说：*「Read parallel-subagent-planner and output a plan artifact before spawning subagents.」*
+2. 说：*「Read subagent-lane-planner and output a plan artifact before spawning subagents.」*
 3. 用 Claude Code 的 Task/子 agent 机制，按规划里的 `Read`/`Write` 块执行。
 
 ---
@@ -54,7 +56,7 @@ Decide ➔ Split ➔ Isolate ➔ Order ➔ Prompt ➔ Integrate ➔ Replan（如
 ## 目录结构
 
 ```text
-parallel-subagent-planner/
+subagent-lane-planner/
 ├─ SKILL.md                          # 路由器（约 50 行）；细节在 references/
 ├─ agents/
 │  └─ openai.yaml                    # Codex 元数据配置
@@ -82,8 +84,8 @@ parallel-subagent-planner/
 ```bash
 mkdir -p "$HOME/.agents/skills"
 git clone --depth 1 \
-  https://github.com/manhua-man/codex-parallel-subagent-planner.git \
-  "$HOME/.agents/skills/parallel-subagent-planner"
+  https://github.com/manhua-man/subagent-lane-planner.git \
+  "$HOME/.agents/skills/subagent-lane-planner"
 ```
 
 ### 项目 Workspace 安装
@@ -91,8 +93,8 @@ git clone --depth 1 \
 ```bash
 mkdir -p "<target-repo>/.agents/skills"
 git clone --depth 1 \
-  https://github.com/manhua-man/codex-parallel-subagent-planner.git \
-  "<target-repo>/.agents/skills/parallel-subagent-planner"
+  https://github.com/manhua-man/subagent-lane-planner.git \
+  "<target-repo>/.agents/skills/subagent-lane-planner"
 ```
 
 ---
