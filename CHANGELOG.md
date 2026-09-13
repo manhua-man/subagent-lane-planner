@@ -2,6 +2,26 @@
 
 All notable changes to the `parallel-subagent-planner` skill will be documented in this file.
 
+## [Unreleased]
+
+### Delegation evidence and evaluation
+
+- Added automatic fallback with brief user notification for unavailable requested models or reasoning levels, preserving explicit no-fallback instructions and independently supported choices.
+- Added model-neutral subagent selection based on user choices, available models, task needs, and capability/cost evidence, with failure classification before escalation.
+- Added separate model-selection replay cases for multiple models, default preservation, and escalation decisions.
+- Added concise evidence returns, reporting before out-of-scope decisions or changes, and an explicit integration completion check.
+- Extended replay guidance with repeated controlled runs, per-thread/model token breakdowns, and separate model-configuration comparisons.
+- Added replay cases for noisy evidence, shared-schema escalation, and incomplete or conflicting subagent results.
+
+### Convergence release
+
+- Reframed the project as a thin execution policy over Codex's native subagent tools.
+- Reduced the core loop to assess, minimally delegate, and verify in the main thread.
+- Replaced the eight-field prompt template with `Goal`, `Read`, `Write`, and `Acceptance`.
+- Allowed overlapping reads of stable inputs while retaining disjoint concurrent writes and single ownership for shared contracts.
+- Removed duplicated references, custom-agent persistence guidance, the nested anti-overengineering skill, and the tracked release archive.
+- Added a small set of paired behavioral replay cases instead of a planner schema or scheduling framework.
+
 ## [v3.0.1] - 2026-08-05
 
 ### Patch Release — Pragmatic Refinements & Output Standardization

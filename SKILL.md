@@ -1,59 +1,50 @@
 ---
 name: parallel-subagent-planner
 description: >-
-  Plan safe Codex subagent execution for coding tasks. Use when deciding whether
-  subagents would help, splitting work into independent scopes, establishing
-  dependency order, or writing focused subagent prompts.
+  Decide and execute safe Codex subagent delegation for coding, debugging,
+  refactoring, testing, verification, documentation, and cleanup. Use when Codex
+  must judge whether delegation provides clear parallel or investigative value,
+  divide work into independent scopes, or integrate delegated results.
 ---
 
-# Parallel Subagent Planner (v3.0.1 Pure Harness Skill)
+# Parallel Subagent Planner
 
-Decide whether subagents help, split work into safe independent lanes, control file scope boundaries, set execution order, and guide Codex execution.
+Use Codex's native subagent tools as a thin execution policy. Do not create a scheduling system, persistent agent configuration, or elaborate planner artifact.
 
-## 1. Decide Direct Execution Or Subagents
+## Assess
 
-Never split for the sake of splitting. Execute directly in the main thread unless splitting into subagents materially reduces wall-clock time or a read-only investigation de-risks implementation.
+- Execute in the main thread unless delegation clearly reduces wall-clock time, protects the main context from noisy work, or de-risks an unclear boundary.
+- Start the minimum useful number of subagents. Do not delegate trivial work or a single dependent chain.
+- Do not allow subagents to spawn or delegate to other agents.
+- Prefer parallel delegation for independent read-heavy work. Parallelize writes only when write scopes are disjoint and no task needs another task's unfinished result.
+- Stable read scopes may overlap. Assign exactly one owner to every shared contract or concurrently edited file.
 
-- Use a read-only investigation subagent when repository boundaries or dependencies are unclear.
-- Launch implementation subagents in parallel only when:
-  - Their write scopes are disjoint (`write(A) ∩ write(B) = ∅`).
-  - Neither reads files being modified by another concurrent subagent (`write(A) ∩ read(B) = ∅`).
-  - Their progress does not depend on another concurrent subagent's unfinished output.
+## Choose Subagent Models
 
-## 2. Plan Subagent Lanes & File Boundaries
+- Honor available explicit user model and reasoning choices independently. For unspecified fields, inherit the runtime defaults unless an allowed override has a clear task-specific benefit; this policy permits such overrides when supported by the active tool and higher-priority instructions.
+- If a requested model or reasoning level is unavailable, automatically use a suitable supported alternative, preferring the runtime default when suitable, and continue without requesting confirmation. Briefly tell the user what was requested, what was used, and why. Preserve any supported requested field; do not substitute if the user explicitly forbids fallback. If no suitable alternative is available, report the blocker.
+- Choose from models and reasoning levels actually available in the current environment. Use their declared capabilities or measured task results; do not infer price, speed, or quality from model names. If that evidence is missing, keep the default.
+- For bounded routine work with objective acceptance checks, prefer a known faster or lower-cost model that meets the task's capability needs. For ambiguous root-cause analysis, architecture decisions, or high-risk review, prioritize demonstrated reasoning ability and required tools/context capacity. Do not bind roles to particular model names or default every task to maximum reasoning.
+- Before escalating after failure, distinguish missing context, unclear scope, and environment/tool failures from a reasoning limitation. The main thread may choose a more capable available model when evidence supports it; subagents report blockers rather than changing their own model. Record the reason for an override briefly.
 
-Read [references/lane-decomposition.md](references/lane-decomposition.md) for slicing heuristics and file isolation rules.
+## Delegate
 
-- **Vertical Capability Split**: Group UI, API routes, DTOs, and tests for a feature into one subagent lane to prevent inter-agent deadlocks.
-- **Horizontal Module Split**: Separate distinct packages operating on disjoint directories.
-- Assign explicit `Goal`, `Read` scope, `Write` scope (exact files/directories allowed to edit, or `none`), and `Ignore` scope (system noise and sibling directories).
+Give each subagent only:
 
-## 3. Set Execution Order & Shared Contracts
+- `Goal`: one narrow outcome.
+- `Read`: the files or subtrees it may inspect.
+- `Write`: exact files or directories it may edit, or `none`.
+- `Acceptance`: an objective check or concrete evidence to return.
 
-Assign exactly one owner to each shared contract file: either the main thread or one subagent.
+Add a role, working directory, model override, ignore list, or extra directives only when the task requires them. Keep unrelated edits out of scope.
 
-1. The owner completes the shared contract changes.
-2. The main thread reviews and accepts that stable version.
-3. Dependent subagents may then read it, but must not modify it.
+- Return concise findings, relevant file or symbol references, verification results, and blockers; include raw logs only when needed to assess the evidence.
+- If progress requires an architectural decision, a shared-contract change outside the assignment, or broader file ownership, report the blocker to the main thread before making that change.
 
-If a subagent fails or violates scope, report the issue, stop dependent work, and replan only the affected scope.
+## Integrate
 
-## 4. Generate Subagent Prompts
-
-Read [references/child-prompts.md](references/child-prompts.md) for prompt templates and role directive examples.
-
-Generate self-contained subagent prompts containing: `Role`, `Goal`, `Working Directory`, `Read`, `Write`, `Ignore`, `Acceptance`, and role-specific directives.
-
-## 5. Output
-
-Return:
-
-- **Decision**: Execute directly, investigate first, or use parallel subagents — with one brief reason.
-- **Order**: State any work that must finish before parallel work begins.
-- **Subagents**: For each subagent, provide Goal, Read, Write, Ignore, and Acceptance.
-- **Integration**: State the workspace-wide checks the main thread will run.
-
-## 6. Main Thread Integration & Custom Agent Guidance
-
-- **Main Thread Integration**: The main thread is 100% responsible for merging child subagent deliverables and running workspace-wide integration test suites.
-- **Custom Agent Guidance**: Read [references/child-prompts.md](references/child-prompts.md). If a subagent role pattern proves repeatedly useful across tasks, recommend saving it as a persistent custom agent spec (`.codex/agents/<name>.toml`) with explicit user approval.
+- The main thread owns shared contracts, coordination decisions, result review, and workspace-wide verification.
+- Continue useful independent main-thread work while subagents run.
+- If a subtask fails or violates scope, replan only the affected work. Do not automatically broaden scope or add agents.
+- Before claiming completion, ensure all required subagents have finished or explicitly failed, resolve conflicting findings, and integrate and verify the required results. Recover unfinished required work or report it as incomplete.
+- For implementation requests, perform useful delegation and integration instead of stopping after a plan. For plan-only requests, return the decision, dependency order, subtask contracts, and integration checks briefly.

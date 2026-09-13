@@ -1,51 +1,34 @@
-# parallel-subagent-planner (v3.0.1)
+# parallel-subagent-planner
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-`parallel-subagent-planner` is a lightweight **Agent Planning Harness Skill** for Codex. It helps Codex decide when to split work into subagents, set safe file scope boundaries, establish execution order, generate clean subagent prompts, and recommend reusable custom agent roles.
+`parallel-subagent-planner` is a thin delegation policy for Codex. It helps Codex decide whether subagents are useful, give each subagent a bounded task, and keep final integration in the main thread.
 
----
-
-## What It Does
-
-- **Split Decision**: Evaluates whether splitting into subagents saves wall-clock time vs. direct execution, or if a read-only investigation de-risks implementation.
-- **File Boundary Isolation**: Enforces disjoint write scopes (`write(A) ∩ write(B) = ∅`) so parallel subagents never overwrite each other's work.
-- **Execution Order**: Assigns shared contract files to exactly one owner (main thread or subagent) before dependent consumers read them.
-- **Clean Subagent Prompts**: Generates clear prompts specifying goals, read/write file scopes, and acceptance tests.
-- **Main Thread Integration**: Merges subagent outputs and runs workspace-wide integration checks.
-- **Custom Agent Guidance**: Suggests saving recurring subagent roles into `.codex/agents/<name>.toml` specs with explicit user approval when repeated evidence exists.
-
----
-
-## Core Cycle
+## Core contract
 
 ```text
-Decide ➔ Split ➔ Isolate ➔ Order ➔ Prompt ➔ Integrate
+Assess → Delegate the minimum useful work → Verify in the main thread
 ```
 
----
+- Default to direct execution for small or sequential tasks.
+- Run independent read-heavy work in parallel; parallelize writes only across disjoint scopes.
+- Describe each subtask with `Goal`, `Read`, `Write`, and `Acceptance`.
+- Give every shared contract or concurrently edited file one owner.
+- Keep subagents from delegating further; the main thread reviews and verifies the result.
+- Respect user model choices and runtime defaults; use supported overrides when task needs and available capability, speed, or cost evidence justify them. No model names are pinned.
+- If a requested model or reasoning level is unavailable, use a suitable supported fallback and briefly notify the user without interrupting for confirmation, unless the user forbids fallback.
 
-## File Structure
+The skill uses Codex's native subagent tools. It does not implement a scheduler, state machine, role catalog, or persistent agent system.
 
-```text
-parallel-subagent-planner/
-├─ SKILL.md                          # Core skill instructions (~50 lines)
-├─ agents/
-│  └─ openai.yaml                    # Codex metadata configuration
-├─ references/
-│  ├─ lane-decomposition.md          # Slicing heuristics, scope isolation & execution order
-│  └─ child-prompts.md               # Subagent prompt templates & custom agent guidance
-├─ README.md                         # English documentation
-├─ README.zh-CN.md                   # Chinese documentation
-├─ CHANGELOG.md                      # Release notes
-└─ LICENSE                           # MIT License
-```
+## Example
 
----
+For a request that changes two independent packages, Codex may delegate one package to each subagent. Each receives only its goal, allowed files, write boundary, and local test. The main thread then reviews both results and runs the workspace-wide checks.
+
+For a one-file fix or a task whose steps depend on one another, Codex stays in the main thread.
 
 ## Installation
 
-### Personal Skill Installation
+Personal installation:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
@@ -54,15 +37,13 @@ git clone --depth 1 \
   "$HOME/.agents/skills/parallel-subagent-planner"
 ```
 
-### Project Workspace Installation
-
-Copy the repository contents into a target workspace:
+For a project-scoped installation, copy the skill to:
 
 ```text
-<target-repo>/.agents/skills/parallel-subagent-planner/
+<project>/.agents/skills/parallel-subagent-planner/
 ```
 
----
+Behavioral replay cases and measurement guidance live in [`evals/cases.md`](evals/cases.md). Compare repeated runs with and without the skill using the same model settings; report success, elapsed time, and cached/non-cached token usage separately. Evaluate model configuration changes in a separate comparison.
 
 ## License
 
