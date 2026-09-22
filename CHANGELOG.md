@@ -1,8 +1,15 @@
 # Changelog
 
-All notable changes to the `parallel-subagent-planner` skill will be documented in this file.
+All notable changes to the `subagent-lane-planner` skill will be documented in this file.
 
 ## [Unreleased]
+
+### History integration
+
+- Combined the formerly separate histories while retaining the `subagent-lane-planner` name and current repository/install paths.
+- Retained the optional Cursor guide and plan template, aligned them with the four-field task contract, and kept model policy in the core skill.
+- Preserved proportionate verification and stopping dependent work after failures; removed the stale tracked release archive.
+- Added a reusable real-task review prompt and README entry points.
 
 ### Delegation evidence and evaluation
 
@@ -21,6 +28,35 @@ All notable changes to the `parallel-subagent-planner` skill will be documented 
 - Allowed overlapping reads of stable inputs while retaining disjoint concurrent writes and single ownership for shared contracts.
 - Removed duplicated references, custom-agent persistence guidance, the nested anti-overengineering skill, and the tracked release archive.
 - Added a small set of paired behavioral replay cases instead of a planner schema or scheduling framework.
+
+## [v0.7.0] - 2026-09-08
+
+### Rename — skill, repository, and install paths
+- **Skill `name`**: `parallel-subagent-planner` → `subagent-lane-planner`
+- **GitHub repository**: `codex-parallel-subagent-planner` → `subagent-lane-planner` (old URL redirects)
+- **Install directory**: `~/.agents/skills/subagent-lane-planner/` or `<repo>/.agents/skills/subagent-lane-planner/`
+- **Release zip**: `subagent-lane-planner-v0.7.0.zip`
+- Display name and trigger phrases updated; skill behavior unchanged from v0.6.5
+
+## [v0.6.5] - 2026-09-08
+
+- **README trigger guides**: Three-line how-to for Cursor, Codex, and Claude Code after install.
+- **`references/cursor-task-prompt.md`**: `subagent_type` selection, default `inherit` model, true parallelism via multiple `Task` calls in one message.
+- **`references/plan-artifact-template.md`**: Optional markdown plan for user review before spawn.
+- **`lane-decomposition.md` §4 Replan triggers**: Scope violation, shared-file conflict, lane failure — stop dependents, replan affected lanes only.
+- **SKILL.md**: Links to plan artifact and Cursor reference; version bump.
+
+## [v0.6.3] - 2026-09-08
+
+- Router-style `SKILL.md` with details in `references/lane-decomposition.md` and `references/child-prompts.md`
+- Split decision with do-not-split triggers; disjoint write/read scopes and single contract owner
+- Proportionate main-thread verification (directed checks by default, not full-repo CI)
+- Child prompts use one directed Acceptance command per lane
+- Host-driven model/subagent selection; no frozen model catalog in the skill
+
+## Legacy branch history
+
+The entries below belong to the previously separate parallel-subagent-planner history; their version numbers are not newer releases of this repository.
 
 ## [v3.0.1] - 2026-08-05
 

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Parallel Subagent Planner"
+  display_name: "Subagent Lane Planner"
   short_description: "Delegate the minimum safe parallel work"
-  default_prompt: "Use $parallel-subagent-planner to decide and execute only useful, bounded subagent delegation for this task."
+  default_prompt: "Use $subagent-lane-planner to decide and execute only useful, bounded subagent delegation for this task."

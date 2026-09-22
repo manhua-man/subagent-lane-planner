@@ -1,5 +1,5 @@
 ---
-name: parallel-subagent-planner
+name: subagent-lane-planner
 description: >-
   Decide and execute safe Codex subagent delegation for coding, debugging,
   refactoring, testing, verification, documentation, and cleanup. Use when Codex
@@ -7,9 +7,9 @@ description: >-
   divide work into independent scopes, or integrate delegated results.
 ---
 
-# Parallel Subagent Planner
+# Subagent Lane Planner
 
-Use Codex's native subagent tools as a thin execution policy. Do not create a scheduling system, persistent agent configuration, or elaborate planner artifact.
+Use the current host's native subagent tools as a thin execution policy. Do not create a scheduling system, persistent agent configuration, or elaborate planner artifact. For Cursor-specific usage, read [the host guide](references/cursor-task-prompt.md); for a requested plan-only deliverable, use the optional [plan template](references/plan-artifact-template.md).
 
 ## Assess
 
@@ -43,8 +43,8 @@ Add a role, working directory, model override, ignore list, or extra directives 
 
 ## Integrate
 
-- The main thread owns shared contracts, coordination decisions, result review, and workspace-wide verification.
+- The main thread owns shared contracts, coordination decisions, result review, and verification proportionate to the change. Run targeted checks first; expand to integration or workspace-wide checks when shared behavior or cross-module contracts warrant them.
 - Continue useful independent main-thread work while subagents run.
-- If a subtask fails or violates scope, replan only the affected work. Do not automatically broaden scope or add agents.
+- If a subtask fails or violates scope, stop dependent work until its inputs are stable and accepted, and replan only the affected work. Do not automatically broaden scope or add agents.
 - Before claiming completion, ensure all required subagents have finished or explicitly failed, resolve conflicting findings, and integrate and verify the required results. Recover unfinished required work or report it as incomplete.
 - For implementation requests, perform useful delegation and integration instead of stopping after a plan. For plan-only requests, return the decision, dependency order, subtask contracts, and integration checks briefly.
