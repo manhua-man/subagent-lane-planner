@@ -45,6 +45,8 @@ For a project-scoped installation, copy the skill to:
 
 Behavioral replay cases and measurement guidance live in [`evals/cases.md`](evals/cases.md). Compare repeated runs with and without the skill using the same model settings; report success, elapsed time, and cached/non-cached token usage separately. Evaluate model configuration changes in a separate comparison.
 
+For a completed real task, copy the [post-task review prompt (Chinese)](evals/real-task-review.md) into the original task conversation.
+
 ## License
 
 [MIT License](LICENSE) © 2026 manhua-man

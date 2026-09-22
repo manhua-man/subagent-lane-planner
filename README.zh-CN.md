@@ -45,6 +45,8 @@ git clone --depth 1 \
 
 行为回放用例和统计口径位于 [`evals/cases.md`](evals/cases.md)。请固定模型配置，分别在启用与禁用 Skill 时重复运行，记录成功率、耗时，并区分缓存与非缓存 token 用量。模型配置变化应另设对照。
 
+真实任务完成后，可以把 [任务复盘提示词](evals/real-task-review.md) 复制到原任务对话中，依据执行记录评测这次委派的实际表现。
+
 ## 开源协议
 
 [MIT License](LICENSE) © 2026 manhua-man
