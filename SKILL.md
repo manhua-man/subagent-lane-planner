@@ -4,12 +4,20 @@ description: >-
   Decide and execute safe Codex subagent delegation for coding, debugging,
   refactoring, testing, verification, documentation, and cleanup. Use when Codex
   must judge whether delegation provides clear parallel or investigative value,
-  divide work into independent scopes, or integrate delegated results.
+  divide work into independent scopes, integrate delegated results, or coordinate
+  explicitly requested independent Codex chats using available host tools.
 ---
 
 # Subagent Lane Planner
 
-Use the current host's native subagent tools as a thin execution policy. Do not create a scheduling system, persistent agent configuration, or elaborate planner artifact. For Cursor-specific usage, read [the host guide](references/cursor-task-prompt.md); for a requested plan-only deliverable, use the optional [plan template](references/plan-artifact-template.md).
+Use the current host's coordination tools as a thin execution policy. Do not create a scheduling system, persistent agent configuration, or elaborate planner artifact. For Cursor-specific usage, read [the host guide](references/cursor-task-prompt.md); for a requested plan-only deliverable, use the optional [plan template](references/plan-artifact-template.md).
+
+## Choose Execution
+
+- Use direct execution for small or dependent work and native subagents for useful bounded delegation. A generic request to work in parallel does not request new user-owned chats.
+- When the human explicitly requests new independent Codex chats, use the available host chat tools and read [the chat execution guide](references/codex-chat-execution.md). Independent chats can also be inspected or coordinated when the human authorizes those actions; creating a chat does not itself authorize every later message.
+- Use the same task boundaries and integration rules for both execution paths. Add project, checkout, and source identity only when needed to select or verify the actual working scope. Independent worker chats must not delegate further.
+- If the requested execution path is unavailable, state the limitation. Do not label a native subagent as a new chat or silently substitute when the human specifically requires independent chats.
 
 ## Assess
 

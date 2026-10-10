@@ -3,7 +3,7 @@
 Use when the user requests a plan or a reviewable scope proposal. For an implementation request, proceed with useful delegation and integration within the authorized scope; do not stop solely to obtain approval for this template.
 
 ```markdown
-**Decision:** [direct execution, investigate first, or parallel subagents] — [reason]
+**Decision:** [direct execution, investigate first, parallel subagents, or explicitly requested independent chats] — [reason]
 
 **Order:** [dependencies that must finish first, or none]
 

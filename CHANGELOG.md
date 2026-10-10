@@ -4,6 +4,12 @@ All notable changes to the `subagent-lane-planner` skill will be documented in t
 
 ## [Unreleased]
 
+### Independent chat execution
+
+- Added an optional Codex desktop chat lifecycle for explicitly requested independent conversations, while keeping native subagents as the default parallel path.
+- Defined ready versus pending identities, cursor-based waits, human authorization for follow-up messages, source-aware integration and failure recovery.
+- Added chat behavior replay cases without introducing a scheduler or persistent planner state.
+
 ### History integration
 
 - Combined the formerly separate histories while retaining the `subagent-lane-planner` name and current repository/install paths.

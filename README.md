@@ -20,7 +20,7 @@ Assess → Delegate the minimum useful work → Verify in the main thread
 - Respect user model choices and runtime defaults; use supported overrides when task needs and available capability, speed, or cost evidence justify them. No model names are pinned.
 - If a requested model or reasoning level is unavailable, use a suitable supported fallback and briefly notify the user without interrupting for confirmation, unless the user forbids fallback.
 
-The skill uses the current host's native subagent tools. It does not implement a scheduler, state machine, role catalog, or persistent agent system.
+The skill uses the current host's native subagent tools for ordinary delegation. When the human explicitly asks for independent Codex chats, it also supports the host's creation, waiting, authorized follow-up, and integration tools through the [chat execution guide](references/codex-chat-execution.md). It does not implement a scheduler, state machine, role catalog, or persistent agent system.
 
 ## Invocation
 
@@ -33,6 +33,8 @@ Use the optional [plan template](references/plan-artifact-template.md) when requ
 For a request that changes two independent packages, Codex may delegate one package to each subagent. Each receives only its goal, allowed files, write boundary, and local test. The main thread then reviews both results and runs checks proportionate to the change.
 
 For a one-file fix or a task whose steps depend on one another, Codex stays in the main thread.
+
+For separate sidebar conversations, explicitly request them: “Create two local chats for these independent projects, coordinate them, and send follow-ups to those chats as needed.” This authorizes the initial prompts and scoped follow-ups. A generic request to work in parallel uses native subagents when useful.
 
 ## Installation
 
