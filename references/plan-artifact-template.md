@@ -1,19 +1,19 @@
-# Optional Subagent Plan
+# Optional Living Task Plan
 
-Use when the user requests a plan or a reviewable scope proposal. For an implementation request, proceed with useful delegation and integration within the authorized scope; do not stop solely to obtain approval for this template.
+Use for a requested plan or when a long task needs a reviewable record. For an implementation request, continue from the plan into authorized action; this template does not add an approval gate or require a separate planning agent.
 
-```markdown
-**Decision:** [direct execution, investigate first, or parallel subagents] — [reason]
+~~~markdown
+**Goal and constraints:** [latest requested outcome, scope, acceptance]
 
-**Order:** [dependencies that must finish first, or none]
+**Established:** [only consequential facts, decisions, and evidence locations]
 
-**Subtask:** [short label; repeat only for useful independent work]
-- Goal: [one narrow outcome]
-- Read: [stable files or subtrees]
-- Write: [exact files or directories, or none]
-- Acceptance: [targeted command or concrete evidence to return]
+**Next action:** [what the main agent will do next and why]
 
-**Integration:** [main-thread result review and checks proportionate to the change]
-```
+**Remaining:** [necessary work, dependencies, and actual blockers]
 
-Add model overrides, roles, working directories, or ignore paths only when needed. Apply the [core policy](../SKILL.md) for model selection, ownership, failure handling, and completion.
+**Verification:** [behavior to check; what has and has not run]
+~~~
+
+Keep this in the existing task record when possible. Revise affected items when results or user requirements change, rather than producing a new report for every step. A short task may need no saved plan.
+
+If external work is useful, add only the relevant `Goal`, `Read`, `Write`, and `Acceptance` contracts and identify pending results. Apply [delegation](delegation.md) before dispatching. The plan remains the main agent's current working path, not an immutable sequence or a completion claim.

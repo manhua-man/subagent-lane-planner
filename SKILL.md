@@ -1,50 +1,40 @@
 ---
 name: subagent-lane-planner
 description: >-
-  Decide and execute safe Codex subagent delegation for coding, debugging,
-  refactoring, testing, verification, documentation, and cleanup. Use when Codex
-  must judge whether delegation provides clear parallel or investigative value,
-  divide work into independent scopes, or integrate delegated results.
+  Drive multi-step engineering work from the main conversation, adapting actions
+  as evidence, requirements, or external results change. Use when work needs
+  sustained execution and verification, not just a one-off answer or a subtask plan.
 ---
 
-# Subagent Lane Planner
+# Main-Agent Task Loop
 
-Use the current host's native subagent tools as a thin execution policy. Do not create a scheduling system, persistent agent configuration, or elaborate planner artifact. For Cursor-specific usage, read [the host guide](references/cursor-task-prompt.md); for a requested plan-only deliverable, use the optional [plan template](references/plan-artifact-template.md).
+Keep the main conversation responsible for understanding the task, deciding the next useful action, acting, and judging the result. Skills, tools, and external executors serve that loop; delegation is not a required stage. This is a workflow over the host's existing capabilities, not a scheduler or a new agent runtime.
 
-## Assess
+## Keep the goal authoritative
 
-- Execute in the main thread unless delegation clearly reduces wall-clock time, protects the main context from noisy work, or de-risks an unclear boundary.
-- Start the minimum useful number of subagents. Do not delegate trivial work or a single dependent chain.
-- Do not allow subagents to spawn or delegate to other agents.
-- Prefer parallel delegation for independent read-heavy work. Parallelize writes only when write scopes are disjoint and no task needs another task's unfinished result.
-- Stable read scopes may overlap. Assign exactly one owner to every shared contract or concurrently edited file.
+- Work from the latest user goal, constraints, and observable acceptance result. Preserve relevant decisions and user changes; an old plan or external receipt cannot override them.
+- Plan only far enough to take useful action. The agent carrying out the work also revises its plan when evidence changes. Do not insert a separate planning or routing agent.
+- Honor the requested deliverable: implement when asked to implement; stop at a plan when asked only to plan. Use the optional [task plan](references/plan-artifact-template.md) when a reviewable plan is useful, not for every request.
 
-## Choose Subagent Models
+## Take the next useful action
 
-- Honor available explicit user model and reasoning choices independently. For unspecified fields, inherit the runtime defaults unless an allowed override has a clear task-specific benefit; this policy permits such overrides when supported by the active tool and higher-priority instructions.
-- If a requested model or reasoning level is unavailable, automatically use a suitable supported alternative, preferring the runtime default when suitable, and continue without requesting confirmation. Briefly tell the user what was requested, what was used, and why. Preserve any supported requested field; do not substitute if the user explicitly forbids fallback. If no suitable alternative is available, report the blocker.
-- Choose from models and reasoning levels actually available in the current environment. Use their declared capabilities or measured task results; do not infer price, speed, or quality from model names. If that evidence is missing, keep the default.
-- For bounded routine work with objective acceptance checks, prefer a known faster or lower-cost model that meets the task's capability needs. For ambiguous root-cause analysis, architecture decisions, or high-risk review, prioritize demonstrated reasoning ability and required tools/context capacity. Do not bind roles to particular model names or default every task to maximum reasoning.
-- Before escalating after failure, distinguish missing context, unclear scope, and environment/tool failures from a reasoning limitation. The main thread may choose a more capable available model when evidence supports it; subagents report blockers rather than changing their own model. Record the reason for an override briefly.
+- Investigate, implement, or verify directly when the current context is the right place for the work. A multi-file task does not by itself require multiple agents.
+- Load relevant existing skills or references and use the actual available tools. Parallel tool calls in the same context do not require extra agents.
+- Read [context and capabilities](references/context-and-capabilities.md) when selecting specialized knowledge, handling noisy context, changing goals, or resuming a long task. Do not preload unrelated material.
+- Delegate only when independent progress, context isolation, or independent verification has clear value. Before doing so, read [delegation](references/delegation.md) for authorization, executor choice, model policy, task boundaries, and result integration. Do not create a fixed team by profession.
+- Follow project role restrictions and host permissions. A skill invocation is not permission to create standalone chats, message other chats, or expand external writes. In Cursor, read the [host guide](references/cursor-task-prompt.md) when host-specific adaptation is needed.
 
-## Delegate
+## Make results change the work
 
-Give each subagent only:
+- Compare tool output and external conclusions with the current goal and actual artifacts. Resolve material conflicts before relying on them; use original evidence when a summary omits something needed for the decision.
+- Accept relevant findings into the main task understanding, then take the next action: connect an interface, fix a defect, run a check, revise the approach, or close a resolved item. Receiving a result is not the deliverable.
+- If the original approach is disproved, change the action, not only the plan text. Do not repeat already sufficient investigation without a new reason.
+- Classify failures before retrying: missing input, unclear scope, environment/tool failure, or an implementation/reasoning problem. Replan only affected work; do not automatically add agents or widen scope.
 
-- `Goal`: one narrow outcome.
-- `Read`: the files or subtrees it may inspect.
-- `Write`: exact files or directories it may edit, or `none`.
-- `Acceptance`: an objective check or concrete evidence to return.
+## Finish the task, not just the turn
 
-Add a role, working directory, model override, ignore list, or extra directives only when the task requires them. Keep unrelated edits out of scope.
-
-- Return concise findings, relevant file or symbol references, verification results, and blockers; include raw logs only when needed to assess the evidence.
-- If progress requires an architectural decision, a shared-contract change outside the assignment, or broader file ownership, report the blocker to the main thread before making that change.
-
-## Integrate
-
-- The main thread owns shared contracts, coordination decisions, result review, and verification proportionate to the change. Run targeted checks first; expand to integration or workspace-wide checks when shared behavior or cross-module contracts warrant them.
-- Continue useful independent main-thread work while subagents run.
-- If a subtask fails or violates scope, stop dependent work until its inputs are stable and accepted, and replan only the affected work. Do not automatically broaden scope or add agents.
-- Before claiming completion, ensure all required subagents have finished or explicitly failed, resolve conflicting findings, and integrate and verify the required results. Recover unfinished required work or report it as incomplete.
-- For implementation requests, perform useful delegation and integration instead of stopping after a plan. For plan-only requests, return the decision, dependency order, subtask contracts, and integration checks briefly.
+- Verify the requested behavior proportionately. Targeted checks come first; expand when shared behavior or actual risk warrants it. Do not repeat successful checks without a relevant change or unresolved risk.
+- A plan, dispatch, idle executor, or completion claim is not proof of completion. Check required artifacts, integration, and actual verification; unresolved required work remains incomplete.
+- Continue safe, in-scope work while useful actions remain. When progress requires user authority, a decision, or an external condition, report the specific blocker, pending work, and resumption condition.
+- If asynchronous work requires ending this turn, retain enough task context to resume and distinguish "waiting" from "done." Use only the host's supported receipt/resumption mechanism; do not invent background execution or automatic wakeups.
+- Once the goal and necessary checks are satisfied, stop. Report the result, actual verification, and material unverified items briefly.

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Subagent Lane Planner"
-  short_description: "Delegate the minimum safe parallel work"
-  default_prompt: "Use $subagent-lane-planner to decide and execute only useful, bounded subagent delegation for this task."
+  display_name: "Main-Agent Task Loop"
+  short_description: "Keep the main agent moving from evidence to completion"
+  default_prompt: "Use $subagent-lane-planner to complete this task from the main conversation, adapting the plan to evidence and using skills, tools, or authorized external work only as needed."

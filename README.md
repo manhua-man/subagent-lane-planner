@@ -2,58 +2,99 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-Former name: `parallel-subagent-planner`; the former `codex-parallel-subagent-planner` repository URL redirects here.
+A **main-agent task workflow**: keep one conversation responsible for the goal, next action, evidence, and completion. Load skills and tools as needed; use external executors only when they add value, then bring their results back into the same task.
 
-`subagent-lane-planner` is a thin delegation policy for Codex. It helps Codex decide whether subagents are useful, give each subagent a bounded task, and keep final integration in the main thread.
+The identifier `subagent-lane-planner` and installation paths are retained for compatibility. Former name: `parallel-subagent-planner`; the old `codex-parallel-subagent-planner` repository URL redirects here.
 
 ## Core contract
 
-```text
-Assess → Delegate the minimum useful work → Verify in the main thread
-```
+~~~text
+Understand the goal → Take a useful action → Check the result → Adapt and continue
+                                                          ↘ Verify and finish
+~~~
 
-- Default to direct execution for small or sequential tasks.
-- Run independent read-heavy work in parallel; parallelize writes only across disjoint scopes.
-- Describe each subtask with `Goal`, `Read`, `Write`, and `Acceptance`.
-- Give every shared contract or concurrently edited file one owner.
-- Keep subagents from delegating further; the main thread reviews and verifies the result.
-- Respect user model choices and runtime defaults; use supported overrides when task needs and available capability, speed, or cost evidence justify them. No model names are pinned.
-- If a requested model or reasoning level is unavailable, use a suitable supported fallback and briefly notify the user without interrupting for confirmation, unless the user forbids fallback.
+The agent writing the plan is also responsible for carrying it out and revising it. Planning, dispatching, and collecting receipts are not completion.
 
-The skill uses the current host's native subagent tools. It does not implement a scheduler, state machine, role catalog, or persistent agent system.
+- Work from the latest goal and constraints, not an immutable initial decomposition.
+- Investigate, implement, and verify in the main conversation when appropriate. The workflow remains useful with **no delegation**.
+- Load relevant existing skills/references and use available tools; parallel tool calls do not require extra agents.
+- Keep consequential facts, decisions, and evidence locations without copying every intermediate log into the main context.
+- Use another context for justified independent work, noisy investigation, or independent verification; do not build a fixed team by profession.
+- Check external results against current artifacts, then take the next action. Report required unfinished work rather than accepting completion claims.
+- Stop after necessary acceptance, or identify the real authority, decision, or external condition blocking progress.
+
+This skill provides instructions, not a scheduler, memory service, permission boundary, or background runtime. It does not create new tools, automatically continue chats, or migrate your existing project rules.
 
 ## Invocation
 
-In Codex, invoke `$subagent-lane-planner` with the task. In Cursor, ask it to use `subagent-lane-planner` and follow the [host guide](references/cursor-task-prompt.md) with the tools available in that session. Other hosts should use their own supported skill discovery and subagent tools.
+In Codex:
 
-Use the optional [plan template](references/plan-artifact-template.md) when requesting a plan. Implementation requests proceed with useful delegation; a separate plan approval is not required by this skill. Apply the skill on demand rather than making it a mandatory gate for every task.
+~~~text
+Use $subagent-lane-planner to complete this change.
+Keep the main conversation responsible for the goal and next action.
+Use skills, tools, or authorized external work only as needed.
+~~~
+
+In Cursor, ask it to use `subagent-lane-planner` with the [host guide](references/cursor-task-prompt.md). Other hosts must use their own supported skill discovery and execution tools.
+
+Use it for multi-step work that needs continued action and adaptation, not as a mandatory gate for every small request. A plan-only request still produces a plan only; an implementation request continues into authorized implementation without a skill-imposed plan approval step.
+
+Invocation does not grant permission to create standalone chats, message other conversations, change configuration, or expand external side effects.
+
+## Progressive detail
+
+| Need | Read |
+|---|---|
+| Select knowledge/tools, handle noisy context, change goals, or resume work | [Context and capabilities](references/context-and-capabilities.md) |
+| Delegate a bounded piece of work or adapt an authorized independent chat | [Delegation](references/delegation.md) |
+| Produce a requested or useful saved plan | [Living task plan](references/plan-artifact-template.md) |
+| Adapt to Cursor's actual tool surface | [Cursor host guide](references/cursor-task-prompt.md) |
+
+Delegation retains the four-field `Goal` / `Read` / `Write` / `Acceptance` contract, single ownership of shared writes, stable input ordering, proportional verification, and model-neutral selection. Model policy lives in the delegation reference and is loaded when delegation is needed.
+
+Native child agents and independent chats are different mechanisms. A fitting, authorized existing chat may retain useful context; a fresh child may suit bounded isolated work. Neither changes ownership of the main task. Host-specific cross-chat delivery and resumption are not certified by this repository's local tests.
 
 ## Example
 
-For a request that changes two independent packages, Codex may delegate one package to each subagent. Each receives only its goal, allowed files, write boundary, and local test. The main thread then reviews both results and runs checks proportionate to the change.
+For a failing preview/commit flow, the main agent reads the relevant amount contract, traces the real consumers, repairs them, and runs their acceptance checks. If evidence disproves the first hypothesis, it changes the implementation, not only its plan. No second agent is required.
 
-For a one-file fix or a task whose steps depend on one another, Codex stays in the main thread.
+For genuinely independent investigations, it may dispatch bounded work, continue another useful action, verify the returned evidence, and use it to complete the next integration step. Merely forwarding the investigators' summaries is not the final result.
 
 ## Installation
 
 Personal installation:
 
-```bash
+~~~bash
 mkdir -p "$HOME/.agents/skills"
 git clone --depth 1 \
   https://github.com/manhua-man/subagent-lane-planner.git \
   "$HOME/.agents/skills/subagent-lane-planner"
-```
+~~~
 
-For a project-scoped installation, copy the skill to:
+Project-scoped installation:
 
-```text
+~~~text
 <project>/.agents/skills/subagent-lane-planner/
-```
+~~~
 
-Behavioral replay cases and measurement guidance live in [`evals/cases.md`](evals/cases.md). Compare repeated runs with and without the skill using the same model settings; report success, elapsed time, and cached/non-cached token usage separately. Evaluate model configuration changes in a separate comparison.
+No skill rename, duplicate entry point, or automatic migration is required for this update.
 
-For a completed real task, copy the [post-task review prompt (Chinese)](evals/real-task-review.md) into the original task conversation.
+## Validation and evaluation
+
+The [reference fixture](evals/fixtures/task_loop/README.md) uses Python 3.10+ and the standard library only. From the repository root:
+
+~~~bash
+python -m unittest discover -s evals/fixtures/task_loop/tests -p 'test_acceptance.py' -v
+~~~
+
+These tests verify fixture outputs, not agent reasoning, host messaging, or productivity. [Replay cases](evals/cases.md) specify failing starter preparation, task-level observations, and controlled comparisons against the previous version and native execution. Keep model settings fixed, repeat conditions, and report failures and cached/non-cached usage separately.
+
+See the [pilot record](evals/results/pilot.md) for what has actually run and what remains unverified. For a real completed or blocked task, use the [post-task review prompt (Chinese)](evals/real-task-review.md) in its original conversation. Do not claim speed or cost gains from fixture tests.
+
+## Design references
+
+- [Anthropic: When to fold subagents into your main agent loop](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop): shared context, progressive disclosure, and evidence-based consolidation.
+- [LangChain: Choosing the Right Multi-Agent Architecture](https://www.langchain.com/blog/choosing-the-right-multi-agent-architecture): start simple and match context/coordination needs to capabilities, not a fixed organization chart.
 
 ## License
 

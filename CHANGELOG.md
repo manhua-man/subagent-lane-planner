@@ -4,6 +4,15 @@ All notable changes to the `subagent-lane-planner` skill will be documented in t
 
 ## [Unreleased]
 
+### Main-agent task loop — 2026-10-26
+
+- Repositioned the workflow around one main conversation that owns the goal, acts, absorbs evidence, revises its plan, and verifies completion; delegation is no longer the central required stage.
+- Retained the skill identifier and installation paths; updated UI metadata, invocation examples, and both READMEs without adding another entry point.
+- Added progressive references for context/capability loading and task continuity; moved the existing model, scope, and four-field delegation policy into a conditional reference.
+- Distinguished native subagents from authorized independent chats without adding a scheduler, persistent role system, permission mechanism, or automatic continuation.
+- Reworked the optional plan as a living task plan and aligned Cursor guidance with actual host capabilities and authorization.
+- Added task-level replay observations, a runnable reference fixture with fixed failing-starter preparation, and a pilot record separating local validation from unmeasured agent performance and host integration.
+
 ### History integration
 
 - Combined the formerly separate histories while retaining the `subagent-lane-planner` name and current repository/install paths.
@@ -43,7 +52,7 @@ All notable changes to the `subagent-lane-planner` skill will be documented in t
 - **README trigger guides**: Three-line how-to for Cursor, Codex, and Claude Code after install.
 - **`references/cursor-task-prompt.md`**: `subagent_type` selection, default `inherit` model, true parallelism via multiple `Task` calls in one message.
 - **`references/plan-artifact-template.md`**: Optional markdown plan for user review before spawn.
-- **`lane-decomposition.md` §4 Replan triggers**: Scope violation, shared-file conflict, lane failure — stop dependents, replan affected lanes only.
+- **`lane-decomposition.md` `4 Replan triggers**: Scope violation, shared-file conflict, lane failure — stop dependents, replan affected lanes only.
 - **SKILL.md**: Links to plan artifact and Cursor reference; version bump.
 
 ## [v0.6.3] - 2026-09-08

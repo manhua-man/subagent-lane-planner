@@ -1,11 +1,13 @@
 # Cursor Host Guide
 
-Use this reference only when executing in Cursor. The active host's tool schema is authoritative; do not assume tool names, agent types, or model IDs from another session are available.
+Read only for Cursor-specific adaptation. The active host's instructions and tool schema are authoritative; do not assume another host's tool names, model IDs, chat APIs, or continuation behavior.
 
-- If the host exposes a `Task` tool, map the narrow task contract to its supported prompt and description fields. Select an investigation or implementation agent type only from those currently available.
-- Give each child `Goal`, `Read`, `Write`, and `Acceptance`. Read-only work uses `Write: none` and must still return concrete evidence. Add working directory or role only when needed.
-- Apply the [core model-selection policy](../SKILL.md#choose-subagent-models), including supported fallback with notification. Do not maintain a separate Cursor model catalog.
-- Dispatch independent tasks before waiting for their results, using the concurrency mechanism the host supports. Dependent work waits for stable accepted inputs.
-- Children must not delegate further. The main thread reviews evidence, resolves conflicts, and performs checks proportionate to the changed scope.
+- Keep the goal, task understanding, next action, and final acceptance in the main conversation. Use available skills/references and tools without creating an agent just to represent each specialty.
+- Complete direct work in the main conversation when appropriate; independent tool calls can run in parallel without extra agents.
+- If external work is justified and authorized, apply [delegation](delegation.md). If the host exposes a `Task` tool, map the four-field contract to supported prompt/description fields and use only available executor types.
+- Apply the model policy in that reference; do not maintain a separate Cursor model catalog.
+- Dispatch independent authorized work before waiting, using the concurrency mechanism the host actually supports. Dependent work waits for accepted inputs.
+- Do not assume a `Task` tool also permits creating or messaging standalone chats. Check those capabilities and their authorization separately.
+- Bring accepted results back into the main task and take the next action. If automatic resumption is unsupported, preserve pending work and disclose the required continuation step.
 
-For a user-requested planning deliverable, use the optional [plan template](plan-artifact-template.md). An implementation request already authorizes useful delegation within scope; this template does not add an approval step.
+Use [context and capabilities](context-and-capabilities.md) for noisy context or resumption, and the optional [living task plan](plan-artifact-template.md) only when useful.
