@@ -14,9 +14,10 @@ Read before delegating. The main agent still owns the user conversation, current
 A native child agent and a standalone chat are different mechanisms. Either may provide work to the main loop; neither changes who owns the task.
 
 - For a bounded fresh-context task, use native subagent tools when allowed by the active runtime and applicable user/project instructions.
-- Reuse an independent chat only when the host supports it, authorization covers messaging that target, and its current context fits the task. Check task fit and relevant current facts, not only the title or past expertise.
-- Creating a standalone chat requires its own applicable authorization. Implementation intent alone does not authorize new chats, cross-chat messages, automatic archiving, or recurring monitoring.
-- Follow the active tool schema, supported models, and project role rules. Do not assume another host's tool names or automatic reply behavior. If the requested carrier is unavailable, continue by another authorized means when feasible and disclose the limitation.
+- Consider an independent chat when its persistence, available context, or separate ownership helps the task. Check task fit, actual source, tool support, and applicable host and user constraints, rather than selecting by title alone.
+- Where the host permits autonomous creation and coordination within the user's task, choose them on their merits without adding an explicit-request requirement. Where the host requires specific authorization, follow it. Do not infer authorization for unrelated side effects, automatic archiving, or recurring monitoring.
+- For Codex desktop chats, use the [chat execution guide](codex-chat-execution.md) and current tool descriptions; their creation and follow-up requirements are host-specific.
+- Follow the active tool schema, supported models, and project role rules. Do not assume another host's tool names or automatic reply behavior. If the requested carrier is unavailable, continue independent authorized work when feasible and disclose the limitation; do not claim a specifically requested chat was created by substituting a subagent.
 
 Task-specific write instructions are coordination boundaries, not a separate read-only sandbox. Host permissions and user authorization remain authoritative.
 

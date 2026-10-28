@@ -4,6 +4,17 @@ All notable changes to the `subagent-lane-planner` skill will be documented in t
 
 ## [Unreleased]
 
+### Host-dependent chat selection
+
+- Removed the skill's blanket explicit-request gate: the main loop can select independent chats autonomously where the host and user constraints allow it.
+- Documented current Codex desktop creation and messaging requirements as host-specific, and added contrasting evaluation conditions without claiming real-host validation.
+
+### Independent chat execution
+
+- Added an optional Codex desktop chat lifecycle for explicitly requested independent conversations, while keeping native subagents as the default parallel path.
+- Defined ready versus pending identities, cursor-based waits, human authorization for follow-up messages, source-aware integration and failure recovery.
+- Added chat behavior replay cases without introducing a scheduler or persistent planner state.
+
 ### Main-agent task loop — 2026-10-26
 
 - Repositioned the workflow around one main conversation that owns the goal, acts, absorbs evidence, revises its plan, and verifies completion; delegation is no longer the central required stage.
@@ -52,7 +63,7 @@ All notable changes to the `subagent-lane-planner` skill will be documented in t
 - **README trigger guides**: Three-line how-to for Cursor, Codex, and Claude Code after install.
 - **`references/cursor-task-prompt.md`**: `subagent_type` selection, default `inherit` model, true parallelism via multiple `Task` calls in one message.
 - **`references/plan-artifact-template.md`**: Optional markdown plan for user review before spawn.
-- **`lane-decomposition.md` `4 Replan triggers**: Scope violation, shared-file conflict, lane failure — stop dependents, replan affected lanes only.
+- **`lane-decomposition.md` §4 Replan triggers**: Scope violation, shared-file conflict, lane failure — stop dependents, replan affected lanes only.
 - **SKILL.md**: Links to plan artifact and Cursor reference; version bump.
 
 ## [v0.6.3] - 2026-09-08

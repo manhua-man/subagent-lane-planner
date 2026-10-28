@@ -22,7 +22,8 @@ Keep the main conversation responsible for understanding the task, deciding the 
 - Load relevant existing skills or references and use the actual available tools. Parallel tool calls in the same context do not require extra agents.
 - Read [context and capabilities](references/context-and-capabilities.md) when selecting specialized knowledge, handling noisy context, changing goals, or resuming a long task. Do not preload unrelated material.
 - Delegate only when independent progress, context isolation, or independent verification has clear value. Before doing so, read [delegation](references/delegation.md) for authorization, executor choice, model policy, task boundaries, and result integration. Do not create a fixed team by profession.
-- Follow project role restrictions and host permissions. A skill invocation is not permission to create standalone chats, message other chats, or expand external writes. In Cursor, read the [host guide](references/cursor-task-prompt.md) when host-specific adaptation is needed.
+- Choose direct work, native subagents, or independent chats based on the task, useful outcomes, and the host's actual capabilities and rules. The task loop may initiate available independent work without imposing its own explicit-request gate; follow applicable host and user constraints. In Cursor, read the [host guide](references/cursor-task-prompt.md) when host-specific adaptation is needed.
+- When considering Codex desktop chats, read the [chat execution guide](references/codex-chat-execution.md) for that host's current creation, messaging, identity, and integration rules. Do not silently substitute a native subagent when an independent chat was specifically requested.
 
 ## Make results change the work
 

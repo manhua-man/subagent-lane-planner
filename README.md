@@ -25,6 +25,8 @@ The agent writing the plan is also responsible for carrying it out and revising 
 
 This skill provides instructions, not a scheduler, memory service, permission boundary, or background runtime. It does not create new tools, automatically continue chats, or migrate your existing project rules.
 
+The main loop can choose direct work, native subagents, or independent chats when they provide value and the host permits them. For Codex desktop, see its [chat execution guide](references/codex-chat-execution.md); its current tools impose specific creation and messaging conditions.
+
 ## Invocation
 
 In Codex:
@@ -39,7 +41,7 @@ In Cursor, ask it to use `subagent-lane-planner` with the [host guide](reference
 
 Use it for multi-step work that needs continued action and adaptation, not as a mandatory gate for every small request. A plan-only request still produces a plan only; an implementation request continues into authorized implementation without a skill-imposed plan approval step.
 
-Invocation does not grant permission to create standalone chats, message other conversations, change configuration, or expand external side effects.
+Apply the current host's tool and authorization rules; the skill does not create permissions or impose a separate explicit-request gate across all hosts.
 
 ## Progressive detail
 
@@ -59,6 +61,8 @@ Native child agents and independent chats are different mechanisms. A fitting, a
 For a failing preview/commit flow, the main agent reads the relevant amount contract, traces the real consumers, repairs them, and runs their acceptance checks. If evidence disproves the first hypothesis, it changes the implementation, not only its plan. No second agent is required.
 
 For genuinely independent investigations, it may dispatch bounded work, continue another useful action, verify the returned evidence, and use it to complete the next integration step. Merely forwarding the investigators' summaries is not the final result.
+
+For separate Codex desktop sidebar conversations, its current `create_thread` tool requires a human request to create new tasks; scoped follow-up messages also need human authorization. Other hosts may permit autonomous chat creation and coordination, in which case the main loop can choose that route when useful.
 
 ## Installation
 
