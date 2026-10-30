@@ -39,3 +39,10 @@ Keep the main conversation responsible for understanding the task, deciding the 
 - Continue safe, in-scope work while useful actions remain. When progress requires user authority, a decision, or an external condition, report the specific blocker, pending work, and resumption condition.
 - If asynchronous work requires ending this turn, retain enough task context to resume and distinguish "waiting" from "done." Use only the host's supported receipt/resumption mechanism; do not invent background execution or automatic wakeups.
 - Once the goal and necessary checks are satisfied, stop. Report the result, actual verification, and material unverified items briefly.
+
+## Auxiliary Command Modes
+
+When explicitly requested via slash commands or user instructions, activate the corresponding auxiliary mode modifier:
+- `/goal`: Activate [goal-mode](modes/goal-mode.md) for unattended execution, automated self-healing loops, and mandatory exit code 0 machine gates.
+- `/boost`: Activate [boost-mode](modes/boost-mode.md) for specialized execution and mandatory adversarial self-audits on edge cases.
+- `/teamwork`: Activate [teamwork-mode](modes/teamwork-mode.md) for decomposing disjoint modules into parallel lanes under the single-writer invariant.

@@ -1,0 +1,12 @@
+---
+description: Autonomous task loop with hard machine verification. Invoked via /goal.
+globs: *
+alwaysApply: false
+---
+
+# /goal
+
+When `/goal` is specified, activate the `modes/goal-mode.md` modifier of `subagent-lane-planner`:
+- Run autonomously until all code changes pass automated test/build commands with exit code 0.
+- Automatically diagnose and fix test failures and compilation errors.
+- Circuit breaker: stop after 3 identical consecutive failures without progress.

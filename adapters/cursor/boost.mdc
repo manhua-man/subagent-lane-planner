@@ -1,0 +1,12 @@
+---
+description: Specialized execution with mandatory adversarial quality audit. Invoked via /boost.
+globs: *
+alwaysApply: false
+---
+
+# /boost
+
+When `/boost` is specified, activate the `modes/boost-mode.md` modifier of `subagent-lane-planner`:
+- Differentiate investigation (root cause tracing) from implementation (production quality).
+- Conduct mandatory adversarial review of edge cases (nulls, empty collections, concurrency, error recovery).
+- Refactor and address any identified deficiency before reporting completion.

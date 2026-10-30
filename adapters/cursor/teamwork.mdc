@@ -1,0 +1,12 @@
+---
+description: Parallel decomposition with single-writer collision avoidance. Invoked via /teamwork.
+globs: *
+alwaysApply: false
+---
+
+# /teamwork
+
+When `/teamwork` is specified, activate the `modes/teamwork-mode.md` modifier of `subagent-lane-planner`:
+- Decompose the request into independent lanes with non-overlapping file scopes.
+- Guarantee the single-writer invariant (zero concurrent edits to any single file).
+- Keep shared entry files with the main coordinator and merge during final consolidation.
