@@ -4,6 +4,14 @@ All notable changes to the `subagent-lane-planner` skill will be documented in t
 
 ## [Unreleased]
 
+### Adaptive execution with fewer workflow constraints
+
+- Reduced the core loop and mode instructions to outcome, evidence, and practical coordination guidance; left investigation breadth, execution order, team composition, delegation depth, and retry strategy to the model's judgment under existing user and host instructions.
+- Removed the fixed three-attempt retry rule and mandatory contract-first sequencing. Allowed parallel investigation and implementation with explicit provisional assumptions reconciled during integration.
+- Distinguished broad investigation from decisions to add unrelated changes; replaced universal review checklists with task-relevant scrutiny.
+- Made assignment fields optional handoff aids and clarified that `Read` lists starting evidence rather than access boundaries.
+- Aligned the delegation, context, Cursor, Codex chat, replay, and bilingual usage references with the lighter guidance. Host tool requirements and accurate completion reporting remain applicable.
+
 ### Auxiliary modes and adapters
 
 - Added optional `/goal`, `/boost`, and `/teamwork` modifiers with Cursor, Claude Code, and Antigravity entry points.

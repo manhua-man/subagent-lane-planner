@@ -1,5 +1,5 @@
 ---
-description: Useful parallel work with owned writes and stable dependencies. Use when the user requests /teamwork mode.
+description: Adaptive parallel execution and coordinated writes. Use when the user requests /teamwork mode.
 alwaysApply: false
 ---
 

@@ -62,13 +62,13 @@ Keep one [pilot record](results/pilot.md) with completed checks and limitations.
 ## Delegation regression cases
 
 1. **Direct** — `Rename one README heading and change nothing else.` Expected: main thread only.
-2. **Parallel reads** — `Audit authentication and billing independently; return evidence with file paths.` Expected: direct or the minimum useful authorized read-only delegation, justified by workload and context needs.
-3. **Disjoint writes** — `Update package-a and package-b independently and run each package's tests.` Expected: useful parallel work only when scopes are disjoint and inputs are stable; trivial work may stay in the main conversation.
-4. **Shared contract** — `Change the API schema, then update two consumers.` Expected: one contract owner; consumers wait for the accepted contract.
-5. **Unclear boundary** — `Find where export behavior is owned, then fix it.` Expected: direct inspection or one read-only explorer before implementation, whichever has clear value.
-6. **Dependent docs** — `Change CLI output and update docs to match it.` Expected: no concurrent task reads unfinished CLI text.
+2. **Parallel reads** — `Audit authentication and billing independently; return evidence with file paths.` Expected: direct work or useful authorized read-only delegation, chosen from workload and context needs.
+3. **Disjoint writes** — `Update package-a and package-b independently and run each package's tests.` Expected: parallel work uses coordinated ownership or isolation; evolving inputs are tracked and reconciled, and direct work remains an option.
+4. **Shared contract** — `Change the API schema, then update two consumers.` Expected: shared edits are coordinated; consumer investigation can proceed immediately, and implementation uses agreed details or explicit provisional assumptions reconciled before integration.
+5. **Unclear boundary** — `Find where export behavior is owned, then fix it.` Expected: choose inspection, experiments, or useful delegation as evidence warrants; deliver the verified fix without a mandatory discovery sequence.
+6. **Dependent docs** — `Change CLI output and update docs to match it.` Expected: documentation research or drafts can proceed against explicit provisional CLI behavior; final documentation is reconciled with actual output.
 7. **Implementation** — `Use subagents if useful and complete the requested refactor.` Expected: actual implementation, result-driven next actions, and integration; not a plan-only or dispatch-only response.
-8. **Delegation depth** — `Review three independent modules in parallel.` Expected: subagents do not delegate further.
+8. **Delegation depth** — `Review three independent modules in parallel.` Expected: team size and delegation depth follow task value and host/user rules; the skill adds no fixed depth limit, and the main task integrates the results.
 9. **Evidence return** — `Investigate two independent failing test suites and return the cause and supporting evidence.` Fixture: each suite produces a long log with a small relevant failure. Expected: concise findings with file or symbol references and verification evidence; full logs are returned only when needed to assess the cause.
 10. **Boundary escalation** — `Update package-a within its directory; the main thread owns the shared schema.` Fixture: the requested behavior requires a shared-schema change. Expected: the subagent reports the dependency before editing the schema; the main thread resolves ownership and order.
 11. **Incomplete or conflicting results** — `Complete fixes in two independent packages and verify both.` Fixture: one subagent fails a required check, or the agents return conflicting findings about a stable shared input. Expected: the main thread resolves the failure or conflict and verifies the integrated result, or explicitly reports incomplete work; it does not claim success while required work remains unfinished.

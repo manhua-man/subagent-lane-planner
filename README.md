@@ -13,13 +13,13 @@ Understand the goal → Take a useful action → Check the result → Adapt and 
                                                           ↘ Verify and finish
 ~~~
 
-The agent writing the plan is also responsible for carrying it out and revising it. Planning, dispatching, and collecting receipts are not completion.
+The main agent owns the outcome and adapts its approach. Planning depth, investigation breadth, team structure, execution order, and retry strategy are left to its judgment; judge delivery by the result and evidence.
 
 - Work from the latest goal and constraints, not an immutable initial decomposition.
 - Investigate, implement, and verify in the main conversation when appropriate. The workflow remains useful with **no delegation**.
 - Load relevant existing skills/references and use available tools; parallel tool calls do not require extra agents.
 - Keep consequential facts, decisions, and evidence locations without copying every intermediate log into the main context.
-- Use another context for justified independent work, noisy investigation, or independent verification; do not build a fixed team by profession.
+- Choose external contexts, team structure, and delegation depth according to useful work and coordination cost.
 - Check external results against current artifacts, then take the next action. Report required unfinished work rather than accepting completion claims.
 - Stop after necessary acceptance, or identify the real authority, decision, or external condition blocking progress.
 
@@ -58,17 +58,17 @@ Request a mode by name or describe its behavior. Read only the selected mode fil
 | Mode | Behavior |
 |---|---|
 | [`/goal`](modes/goal-mode.md) | Continue useful work and repairs through relevant acceptance; report genuine blockers and unverified results accurately. |
-| [`/boost`](modes/boost-mode.md) | Investigate causes and review relevant failure cases within the requested scope. |
-| [`/teamwork`](modes/teamwork-mode.md) | Use useful authorized parallel work, one writer per file, and stable contracts before dependent implementation. |
+| [`/boost`](modes/boost-mode.md) | Follow evidence across modules or layers, challenge assumptions, and verify the requested result. |
+| [`/teamwork`](modes/teamwork-mode.md) | Adapt parallel work and coordinate writes and evolving interface assumptions. |
 
 For example:
 
 ~~~text
 Use subagent-lane-planner with /goal /boost /teamwork to update the API and both consumers.
-Stabilize the shared API contract first, then parallelize independent consumer changes.
+Explore the API and consumers in parallel, coordinate interface assumptions, and verify the integrated result.
 ~~~
 
-Modes combine under the [shared rules](SKILL.md#auxiliary-command-modes) and reuse one acceptance set. They preserve user scope, plan-only requests, cancellation, and host authorization. When useful parallelism or required tools are unavailable, continue feasible direct work and disclose the limitation. Mode names describe skill behavior; native slash-command registration depends on the host. Use a plain-language request if the host reserves a command name.
+Modes combine under the [shared guidance](SKILL.md#auxiliary-command-modes), reuse valid evidence, and evolve checks as findings warrant. There is no fixed retry count, investigation boundary, team shape, or required execution sequence. They preserve user scope, plan-only requests, cancellation, and host authorization. When useful parallelism or required tools are unavailable, continue feasible direct work and disclose the limitation. Mode names describe skill behavior; native slash-command registration depends on the host. Use a plain-language request if the host reserves a command name.
 
 ## Progressive detail
 
@@ -79,7 +79,7 @@ Modes combine under the [shared rules](SKILL.md#auxiliary-command-modes) and reu
 | Produce a requested or useful saved plan | [Living task plan](references/plan-artifact-template.md) |
 | Adapt to Cursor's actual tool surface | [Cursor host guide](references/cursor-task-prompt.md) |
 
-Delegation retains the four-field `Goal` / `Read` / `Write` / `Acceptance` contract, single ownership of shared writes, stable input ordering, proportional verification, and model-neutral selection. Model policy lives in the delegation reference and is loaded when delegation is needed.
+The `Goal` / `Read` / `Write` / `Acceptance` fields help describe assignments when useful; `Read` gives investigation starting points rather than an access whitelist. Coordinate writes and evolving assumptions, then verify the integrated outcome. Model guidance lives in the delegation reference.
 
 Native child agents and independent chats are different mechanisms. A fitting, authorized existing chat may retain useful context; a fresh child may suit bounded isolated work. Neither changes ownership of the main task. Host-specific cross-chat delivery and resumption are not certified by this repository's local tests.
 

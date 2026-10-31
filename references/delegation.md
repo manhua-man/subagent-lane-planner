@@ -1,56 +1,32 @@
 # Delegation as an Execution Capability
 
-Read before delegating. The main agent still owns the user conversation, current goal, coordination decisions, and final verification. Do not establish a permanent role hierarchy, scheduling system, or agent registry.
+Use external work to advance the main task. Choose direct execution, native agents, or independent chats according to their capabilities, useful context, and coordination cost.
 
-## Decide by context and value
+## Organize the work
 
-- Delegate only when independent progress, isolating noisy work, or independent verification justifies another context and a handoff. Keep tightly coupled reasoning or a single dependent chain together.
-- Stable reads may overlap. Parallelize writes only across disjoint scopes with stable inputs; file separation alone is not proof that delegation is useful.
-- Give every shared contract or concurrently edited file one owner. Consumers wait for the actual accepted contract rather than guessing a signature.
-- Start the minimum useful number of executors. Delegated executors must not delegate further or expand their own ownership.
+- Choose team size, roles, and delegation depth from the task and available tools. Adapt them as evidence changes, following user and host instructions.
+- Coordinate competing writes through ownership, isolation, or sequencing. Agree the interface details that dependent work actually needs; independent work and investigation can proceed while other details evolve.
+- Make provisional assumptions explicit and reconcile affected results when they change. Reassign ownership with a clear handoff.
 
-## Use an authorized, available executor
+## Describe the assignment
 
-A native child agent and a standalone chat are different mechanisms. Either may provide work to the main loop; neither changes who owns the task.
+Use these fields when they clarify a handoff; the prompt can remain natural language:
 
-- For a bounded fresh-context task, use native subagent tools when allowed by the active runtime and applicable user/project instructions.
-- Consider an independent chat when its persistence, available context, or separate ownership helps the task. Check task fit, actual source, tool support, and applicable host and user constraints, rather than selecting by title alone.
-- Where the host permits autonomous creation and coordination within the user's task, choose them on their merits without adding an explicit-request requirement. Where the host requires specific authorization, follow it. Do not infer authorization for unrelated side effects, automatic archiving, or recurring monitoring.
-- For Codex desktop chats, use the [chat execution guide](codex-chat-execution.md) and current tool descriptions; their creation and follow-up requirements are host-specific.
-- Follow the active tool schema, supported models, and project role rules. Do not assume another host's tool names or automatic reply behavior. If the requested carrier is unavailable, continue independent authorized work when feasible and disclose the limitation; do not claim a specifically requested chat was created by substituting a subagent.
+- `Goal`: the outcome and its place in the main task.
+- `Read`: useful starting evidence, not an investigation whitelist.
+- `Write`: current implementation responsibility and any shared writers to coordinate with.
+- `Acceptance`: behavior or evidence that establishes the result.
 
-Task-specific write instructions are coordination boundaries, not a separate read-only sandbox. Host permissions and user authorization remain authoritative.
+Include the project, checkout, or source version when needed to identify the work. Executors can adapt their approach and follow evidence beyond the starting files; coordinate changes that affect another writer or the user's requested deliverable.
 
-## Choose executor models
+## Choose tools and models
 
-- Honor available explicit user model and reasoning choices independently. For unspecified fields, inherit the runtime defaults unless an allowed override has a clear task-specific benefit; this policy permits such overrides only when supported by the active tool and higher-priority instructions.
-- If a requested model or reasoning level is unavailable, automatically use a suitable supported alternative, preferring the runtime default when suitable, and continue without requesting confirmation. Briefly tell the user what was requested, what was used, and why. Preserve any supported requested field; do not substitute if the user explicitly forbids fallback. If no suitable alternative is available, report the blocker.
-- Choose only actually available models and reasoning levels, using declared capabilities or measured task results. Do not infer price, speed, or quality from names; keep the default when comparative evidence is missing.
-- For bounded routine work with objective acceptance, prefer a known faster or lower-cost option that meets the task's needs. For ambiguous root-cause analysis, architecture, or high-risk review, prioritize demonstrated reasoning ability and required tools/context. Do not hardcode role/model pairs or always choose maximum effort.
-- Before escalation, separate missing context, unclear scope, and environment/tool failures from a reasoning limitation. The main agent may choose a more capable available model when evidence supports it; executors report blockers rather than changing their own model.
+- Use actually available capabilities and preserve explicit user choices. Where a model or reasoning override is supported, choose it using task needs and available evidence; otherwise inherit configured defaults.
+- If a requested choice is unavailable, use a suitable supported fallback and briefly disclose it, unless the user forbids substitution. Distinguish environment or missing-input failures from reasoning limitations when deciding what to change.
+- Native agents and independent chats have different lifecycles. For Codex desktop chats, consult the [host guide](codex-chat-execution.md) and current tools; existing authorization remains valid, and this skill adds no separate approval gate.
 
-## Give a narrow contract
+## Integrate and continue
 
-- `Goal`: one bounded outcome in the current task.
-- `Read`: the files or subtrees needed to establish it.
-- `Write`: exact allowed files/directories, or `none`.
-- `Acceptance`: an objective check or concrete evidence to return.
+Keep useful work moving while results are pending. Return concise findings, artifacts, verification, and unresolved issues with enough source identity to assess them.
 
-Add a working directory, task identifier, applicable baseline, return target, model override, or other directives only when needed. Asynchronous receipts must be distinguishable from results for earlier work.
-
-Return concise findings, relevant artifact/symbol references, actual checks and their limits, and blockers. Include raw evidence when necessary to judge the conclusion. Report out-of-scope contract/ownership changes before making them; disclose unfinished writes when handing off.
-
-## Bring results back into the task
-
-- Continue useful independent work while an executor runs. Do not start consumers against unfinished inputs.
-- Check each result against the current goal, applicable baseline, actual files, and acceptance evidence. An idle chat or a completion message alone is not acceptance.
-- Resolve contradictions, stale assumptions, or missing integration, then act on the result in the main loop. Do not merely forward summaries or re-investigate already adequate evidence.
-- If a required subtask fails or violates scope, stop dependent work and replan only the affected portion. Recover required work or explicitly report it as incomplete before claiming the whole task is done.
-
-## Handle asynchronous uncertainty
-
-- Use only supported receipt and resumption mechanisms. If a turn must end, retain the pending goal and next action; waiting is not completion.
-- On a send failure or uncertain delivery, inspect available evidence before retrying. Do not blindly duplicate a task that may still be writing.
-- Do not integrate a stale receipt into a changed goal or apply the same result twice. Recheck relevant artifacts and continue from accepted evidence.
-- If replacing an executor, confirm that the old one stopped writing before allowing overlapping writes; otherwise restrict the replacement to read-only investigation.
-- Do not add polling loops, scheduled wakeups, new chats, or permission changes to mask an unsupported continuation path. Report the specific limitation and required next step.
+Compare results with the latest goal and current files, resolve material conflicts, and use them in the next action. When delivery or an executor's status is uncertain, establish what actually happened before resending work or replacing a writer. Retain pending work through the host's supported continuation mechanism and report any required unfinished result accurately.
