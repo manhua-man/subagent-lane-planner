@@ -37,11 +37,38 @@ Keep the main conversation responsible for the goal and next action.
 Use skills, tools, or authorized external work only as needed.
 ~~~
 
+Codex uses the repository's root `SKILL.md` and `agents/openai.yaml` directly, so no separate `adapters/codex/` copy is needed. After installing the complete bundle in one of the locations below, select the skill with `$subagent-lane-planner` and name the desired modes in the same request:
+
+~~~text
+Use $subagent-lane-planner with goal, boost, and teamwork modes to complete this change.
+~~~
+
+The skill's `goal` modifier is distinct from the host's native `/goal` command. Installing this skill does not register or replace `/goal`, `/boost`, or `/teamwork` commands. Use the plain mode names above to avoid command interception. If the skill does not appear after installation, restart Codex and check that it is enabled and that the complete bundle is in a discovered skill directory. See the official [skill discovery and invocation guide](https://developers.openai.com/codex/skills/) and [slash-command reference](https://learn.chatgpt.com/docs/reference/slash-commands).
+
 In Cursor, ask it to use `subagent-lane-planner` with the [host guide](references/cursor-task-prompt.md). Other hosts must use their own supported skill discovery and execution tools.
 
 Use it for multi-step work that needs continued action and adaptation, not as a mandatory gate for every small request. A plan-only request still produces a plan only; an implementation request continues into authorized implementation without a skill-imposed plan approval step.
 
 Apply the current host's tool and authorization rules; the skill does not create permissions or impose a separate explicit-request gate across all hosts.
+
+## Optional modes
+
+Request a mode by name or describe its behavior. Read only the selected mode files; ordinary tasks still use the base workflow.
+
+| Mode | Behavior |
+|---|---|
+| [`/goal`](modes/goal-mode.md) | Continue useful work and repairs through relevant acceptance; report genuine blockers and unverified results accurately. |
+| [`/boost`](modes/boost-mode.md) | Investigate causes and review relevant failure cases within the requested scope. |
+| [`/teamwork`](modes/teamwork-mode.md) | Use useful authorized parallel work, one writer per file, and stable contracts before dependent implementation. |
+
+For example:
+
+~~~text
+Use subagent-lane-planner with /goal /boost /teamwork to update the API and both consumers.
+Stabilize the shared API contract first, then parallelize independent consumer changes.
+~~~
+
+Modes combine under the [shared rules](SKILL.md#auxiliary-command-modes) and reuse one acceptance set. They preserve user scope, plan-only requests, cancellation, and host authorization. When useful parallelism or required tools are unavailable, continue feasible direct work and disclose the limitation. Mode names describe skill behavior; native slash-command registration depends on the host. Use a plain-language request if the host reserves a command name.
 
 ## Progressive detail
 
@@ -82,6 +109,21 @@ Project-scoped installation:
 ~~~
 
 No skill rename, duplicate entry point, or automatic migration is required for this update.
+
+### Optional host adapters
+
+Keep the **complete repository bundle** at the installation path above, including `SKILL.md`, `modes/`, and `references/`. The adapters are thin entry points; copying an adapter alone does not install its rules.
+
+| Host | Optional entry point |
+|---|---|
+| Codex | Use the root [`SKILL.md`](SKILL.md) and [`agents/openai.yaml`](agents/openai.yaml) from the complete installed bundle. Invoke `$subagent-lane-planner` and request `goal`, `boost`, or `teamwork` modes in plain text; no extra adapter is required. |
+| Cursor | Copy the three `.mdc` files from [`adapters/cursor/`](adapters/cursor/) into the project's `.cursor/rules/`. Select the relevant rule through the host's rule controls and request the mode; these files do not themselves register slash commands. |
+| Claude Code | Copy the three `.md` files from [`adapters/claude/`](adapters/claude/) into the project's `.claude/commands/` for project commands, or `~/.claude/commands/` for personal commands. Preserve existing files and choose the intended scope. |
+| Antigravity | Place [`adapters/antigravity/SKILL.md`](adapters/antigravity/SKILL.md) in a `lane-modes/` directory under the host's configured skill discovery location, then request the corresponding mode. |
+
+Each adapter uses the already selected bundle. If none is selected, it looks in the current project's `.agents/skills/subagent-lane-planner/`, then `$HOME/.agents/skills/subagent-lane-planner/`. For a custom installation, identify its root in the request. All canonical rule paths are relative to that root, never to the copied adapter or current working directory. Missing files are reported rather than silently replaced with an abbreviated policy.
+
+The canonical `SKILL.md` and selected `modes/` files own the rules; adapters only locate them. These are installation instructions, not evidence of a completed host runtime test.
 
 ## Validation and evaluation
 

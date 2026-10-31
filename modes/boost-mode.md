@@ -1,21 +1,17 @@
-# Mode: /boost (Specialized Execution & Adversarial Audit)
+# Mode: /boost (Focused Investigation and Adversarial Review)
 
-Activate this mode when the user explicitly includes `/boost` or demands deep verification, root-cause investigation, and zero-compromise engineering.
+Use when the user requests `/boost`, deeper root-cause investigation, or stronger verification. Apply the shared mode rules in [SKILL.md](../SKILL.md#auxiliary-command-modes).
 
-This is an **auxiliary modifier** over the main-agent task loop. It introduces a mandatory pre-completion audit hook.
+## Investigate the relevant behavior
 
-## Invariants Under /boost
+- Trace the affected execution paths, reproduce defects where feasible, and use evidence to distinguish competing explanations before committing to a fix. Temporary diagnostic edits are allowed when needed to test a hypothesis; remove them before delivery unless they belong in the requested result.
+- Implement the agreed behavior without placeholders that bypass required functionality. Preserve the requested fidelity: a prototype, test double, analysis, or plan does not become a production rewrite merely because this mode is active.
 
-1. **Focused Specialization**:
-   - **Investigation Work**: Dedicated strictly to tracing execution paths, reproducing defects, and verifying hypotheses before any code edit.
-   - **Implementation Work**: No placeholders, no TODOs, no superficial mocks for critical paths. Deliver production-ready code.
+## Review before delivery
 
-2. **Adversarial Self-Audit (Mandatory Rejection Loop)**:
-   - Before handing the work to the user, run an adversarial audit on the changes:
-     - **Boundary Conditions**: Null/undefined, zero, empty arrays/strings, overflow, off-by-one.
-     - **State & Concurrency**: Shared mutable state, race conditions, re-entrancy risks.
-     - **Error Handling & Resources**: Graceful failures, explicit error propagation, open stream/file handle cleanup.
-   - If ANY unhandled edge case or sloppy workaround is detected, treat it as an internal rejection. Self-correct and refactor before completing.
+- Review the changes and directly affected paths for plausible failure cases. Select relevant checks from boundary values, empty or missing inputs, state transitions, concurrency, error propagation, and resource cleanup; do not apply every category to every task.
+- Correct material defects introduced or exposed by the change when they prevent the agreed behavior. Report unrelated existing issues separately rather than expanding the assignment to fix them.
+- For each material finding, verify the correction with an appropriate focused test or other observable evidence. Add or adjust tests when they provide meaningful regression protection; reuse sufficient existing checks.
+- For an analysis-only task, challenge the key conclusions against their evidence and plausible counterexamples. Report remaining uncertainty instead of manufacturing code changes or test runs.
 
-3. **High-Watermark Verification**:
-   - Ensure tests cover both happy paths and negative edge cases identified during the adversarial audit.
+Finish when the requested outcome and relevant review findings are resolved. If a required issue cannot be resolved within the current scope or authority, report the specific incomplete result using the main task loop's stopping rules.

@@ -1,12 +1,13 @@
 ---
-description: Specialized execution with mandatory adversarial quality audit. Invokes boost-mode.
+description: Focused investigation and review of relevant failure cases. Use when the user requests /boost mode.
 ---
 
 # /boost
 
-Activate the `/boost` auxiliary mode of `subagent-lane-planner`.
+When the user requests `/boost` or its equivalent behavior:
 
-Follow the rules in `modes/boost-mode.md`:
-- Distinguish investigation (root cause first) from coding (production quality, zero mocks/TODOs).
-- Run mandatory adversarial self-audit on boundary values, nulls, concurrency, and error handling.
-- Treat detected edge-case gaps as internal rejections and fix them before completion.
+Use the already selected `subagent-lane-planner` installation. If none is selected, look for the complete bundle in the current project's `.agents/skills/subagent-lane-planner/`, then in `$HOME/.agents/skills/subagent-lane-planner/` (`$HOME` means the user's home directory). The bundle root contains the canonical `SKILL.md`, `modes/`, and `references/`.
+
+Resolve all paths below from that bundle root, not from this adapter or the working directory. If required files are missing, report the missing location; do not claim the mode is loaded.
+
+Read `SKILL.md`, then `modes/boost-mode.md`. Apply their shared and mode-specific rules. The canonical files define acceptance, scope, authorization, and stopping behavior; this adapter only locates them.

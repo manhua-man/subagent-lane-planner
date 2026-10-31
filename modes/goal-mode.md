@@ -1,23 +1,21 @@
-# Mode: /goal (Autonomous Lifecycle & Machine Acceptance)
+# Mode: /goal (Persistent Execution and Acceptance)
 
-Activate this mode when the user explicitly includes `/goal` or requests unattended long-running execution until fully verified.
+Use when the user requests `/goal` or sustained execution through verification. Apply the shared mode rules in [SKILL.md](../SKILL.md#auxiliary-command-modes).
 
-This is an **auxiliary modifier** over the main-agent task loop. It modifies termination behavior without altering baseline reasoning.
+## Verify the requested outcome
 
-## Invariants Under /goal
+- Establish acceptance from the current user goal and project requirements. For implementation work, run relevant available tests, lint, or build commands and inspect the resulting behavior or artifacts. A successful exit code is necessary for a command that uses it to signal success, but does not by itself establish task completion.
+- Choose checks that cover the changed behavior. Keep agreed contracts and acceptance criteria intact; do not weaken tests or suppress failures merely to obtain a green result.
+- For analysis, documentation, or tasks without suitable automation, use concrete evidence such as source references, examples, rendered output, or artifact inspection. Do not invent a test requirement for an unrelated deliverable.
+- If a required check cannot run, report what prevented it and which result remains unverified. Distinguish pre-existing failures from regressions with evidence; neither a missing check nor a baseline failure counts as a pass.
 
-1. **Deterministic Verification Gate**:
-   - The main agent MUST NOT declare completion based on static review or intermediate edits alone.
-   - Run relevant automated tests, linter, or build checks via the environment terminal.
-   - Acceptance requires exit code 0 on all targeted verification commands.
+## Repair while useful action remains
 
-2. **Autonomous Self-Healing Loop**:
-   - If a test fails, syntax errors occur, or types break, the main agent continues immediately into a repair cycle.
-   - Do not stop or prompt the user for routine compilation/test failures. Diagnose the error and fix it.
-   - **Circuit Breaker**: If the exact same failure pattern repeats 3 consecutive times with zero progress, stop and report the precise external blocker or ambiguity to the user.
+- Diagnose routine implementation, syntax, type, and test failures and repair them within scope without asking for approval at each attempt. Re-run affected checks after a relevant change.
+- Classify the failure before retrying. Continue independent useful work, but report a known missing authorization, necessary user decision, unavailable input, or external dependency when it prevents progress; do not wait for a retry count.
+- Track progress by new evidence or a meaningful change in approach, not by whether the error text is identical. After three consecutive repair attempts without progress, reassess. Continue only with a materially different, evidence-supported next step; otherwise report the unresolved failure, attempted remedies, and what would enable progress. An unresolved implementation problem must not be relabeled an external blocker.
 
-3. **Termination Signal**:
-   - Only conclude when:
-     1. All requested changes are applied.
-     2. Automated checks pass with verified exit code 0.
-     3. A brief summary of changed files and test outputs is presented.
+## Finish or report the actual stopping condition
+
+- Declare completion only when the latest requested deliverable and its required acceptance checks are satisfied. Briefly report the result and actual verification.
+- If required work or verification remains blocked, report it as incomplete, with the reason and resumption condition. Honor user redirection or cancellation immediately; safe stopping is distinct from successful completion.

@@ -37,11 +37,38 @@
 按需使用技能、工具或已授权的外部执行者。
 ~~~
 
+Codex 直接使用仓库根目录的 `SKILL.md` 和 `agents/openai.yaml`，因此不需要额外复制一份 `adapters/codex/`。将完整目录安装到下文列出的位置后，通过 `$subagent-lane-planner` 选择技能，并在同一请求中指定模式：
+
+~~~text
+使用 $subagent-lane-planner，启用 goal、boost、teamwork 模式，完成这项修改。
+~~~
+
+本 Skill 的 `goal` 修饰模式与宿主原生 `/goal` 命令是两种机制。安装本 Skill 不会注册或替换 `/goal`、`/boost`、`/teamwork` 命令；使用上面的普通模式名称，可以避免被命令入口拦截。安装后若未显示，请重启 Codex，并检查技能是否启用、完整目录是否位于可发现的技能路径中。参见官方[技能发现与调用说明](https://developers.openai.com/codex/skills/)和[斜杠命令参考](https://learn.chatgpt.com/docs/reference/slash-commands)。
+
 在 Cursor 中，请求使用 `subagent-lane-planner`，并遵循 [宿主说明](references/cursor-task-prompt.md)。其他宿主使用自身支持的 Skill 发现和执行工具。
 
 适用于需要持续行动与调整的多步任务，不作为所有小请求的强制入口。只要求计划时只交付计划；要求实施时继续执行已授权的实现，不因 Skill 模板多加一道计划审批。
 
 遵守当前宿主的工具和授权规则；Skill 本身不赋予额外权限，也不为所有宿主统一增加“用户必须明确要求”的门槛。
+
+## 可选模式
+
+可以指定模式名称，也可以直接描述所需行为。只读取选中的模式文件；普通任务仍使用基础工作流。
+
+| 模式 | 行为 |
+|---|---|
+| [`/goal`](modes/goal-mode.md) | 持续推进有用行动和修复，完成相关验收；如实报告阻塞和未验证项。 |
+| [`/boost`](modes/boost-mode.md) | 在当前任务范围内调查原因，审查相关失败情形。 |
+| [`/teamwork`](modes/teamwork-mode.md) | 使用有收益且已获授权的并行执行，每个文件同一时刻只有一个写入者，依赖实现前先稳定共享契约。 |
+
+例如：
+
+~~~text
+使用 subagent-lane-planner 的 /goal /boost /teamwork 更新 API 和两个消费者。
+先稳定共享 API 契约，再并行修改相互独立的消费者。
+~~~
+
+多个模式遵循[共同规则](SKILL.md#auxiliary-command-modes)，共用一组验收，不因模式叠加重复检查。用户范围、只交付计划的要求、取消指令和宿主授权继续有效。缺少合适并行任务或必要工具时，继续可行的直接工作并说明限制。模式名称描述 Skill 行为，是否注册原生斜杠命令由宿主决定；若名称被宿主占用，可以直接用自然语言请求对应行为。
 
 ## 按需阅读
 
@@ -82,6 +109,21 @@ git clone --depth 1 \
 ~~~
 
 本次升级不要求改名、安装第二套入口或自动迁移。
+
+### 可选宿主适配入口
+
+在上述安装位置保留**完整仓库目录**，包括 `SKILL.md`、`modes/` 和 `references/`。适配文件只提供入口，单独复制适配文件并不等于安装了模式规则。
+
+| 宿主 | 可选入口 |
+|---|---|
+| Codex | 直接使用完整安装目录中的根入口 [`SKILL.md`](SKILL.md) 与 [`agents/openai.yaml`](agents/openai.yaml)。通过 `$subagent-lane-planner` 调用，在普通文本中请求 `goal`、`boost`、`teamwork` 模式，无需额外适配文件。 |
+| Cursor | 将 [`adapters/cursor/`](adapters/cursor/) 下三个 `.mdc` 文件复制到项目的 `.cursor/rules/`，通过宿主的规则控件选择对应规则并请求模式；这些文件本身不注册斜杠命令。 |
+| Claude Code | 将 [`adapters/claude/`](adapters/claude/) 下三个 `.md` 文件复制到项目的 `.claude/commands/`，或个人的 `~/.claude/commands/`。保留已有文件，按所需作用范围选择位置。 |
+| Antigravity | 将 [`adapters/antigravity/SKILL.md`](adapters/antigravity/SKILL.md) 放入宿主所配置的技能发现位置下的 `lane-modes/` 目录，然后请求对应模式。 |
+
+适配文件沿用已选中的完整安装目录；未指定时，先查找当前项目的 `.agents/skills/subagent-lane-planner/`，再查找 `$HOME/.agents/skills/subagent-lane-planner/`。使用自定义位置时，在请求中指出安装根目录。所有正文路径都相对于该根目录解析，不相对于复制后的适配文件或当前工作目录。缺少文件时如实报告，不悄悄用缩略规则代替。
+
+完整规则由主入口 `SKILL.md` 与选中的 `modes/` 文件维护，适配文件只负责定位。这里提供安装说明，不代表已完成宿主运行验收。
 
 ## 验证与评测
 

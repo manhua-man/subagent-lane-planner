@@ -4,6 +4,16 @@ All notable changes to the `subagent-lane-planner` skill will be documented in t
 
 ## [Unreleased]
 
+### Auxiliary modes and adapters
+
+- Added optional `/goal`, `/boost`, and `/teamwork` modifiers with Cursor, Claude Code, and Antigravity entry points.
+- Defined shared scope, cancellation, authorization, capability fallback, and combined-mode acceptance rules in the main skill.
+- Replaced the exit-code-only goal gate with outcome-based acceptance, relevant automated checks or concrete artifact evidence, accurate blocked/incomplete reporting, and progress-aware repair limits.
+- Scoped boost investigation and adversarial review to the requested deliverable and directly affected behavior; allowed temporary diagnostics and proportionate regression checks.
+- Allowed one explicit owner for shared files, stabilized contracts before dependent implementation, and removed the final-phase-only shared-file restriction.
+- Made adapters locate the complete canonical bundle instead of maintaining abbreviated policy copies; documented installation locations, root resolution, and host-dependent command invocation in both READMEs.
+- Clarified Codex's native skill entry point, explicit `$subagent-lane-planner` mode invocation, discovery troubleshooting, and the distinction between skill modifiers and the host's native `/goal` command, with official documentation links.
+
 ### Host-dependent chat selection
 
 - Removed the skill's blanket explicit-request gate: the main loop can select independent chats autonomously where the host and user constraints allow it.

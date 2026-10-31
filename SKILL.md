@@ -42,7 +42,14 @@ Keep the main conversation responsible for understanding the task, deciding the 
 
 ## Auxiliary Command Modes
 
-When explicitly requested via slash commands or user instructions, activate the corresponding auxiliary mode modifier:
-- `/goal`: Activate [goal-mode](modes/goal-mode.md) for unattended execution, automated self-healing loops, and mandatory exit code 0 machine gates.
-- `/boost`: Activate [boost-mode](modes/boost-mode.md) for specialized execution and mandatory adversarial self-audits on edge cases.
-- `/teamwork`: Activate [teamwork-mode](modes/teamwork-mode.md) for decomposing disjoint modules into parallel lanes under the single-writer invariant.
+When the user requests a mode by name or describes its behavior, read the corresponding modifier:
+
+- `/goal`: Read [goal-mode](modes/goal-mode.md) for persistent execution, repair, and evidence-based acceptance.
+- `/boost`: Read [boost-mode](modes/boost-mode.md) for focused investigation and a review of relevant failure cases before delivery.
+- `/teamwork`: Read [teamwork-mode](modes/teamwork-mode.md) for useful parallel work with explicit write ownership and dependency ordering.
+
+These mode labels describe this skill's behavior; they do not register host commands. In Codex, select `$subagent-lane-planner` and request `goal`, `boost`, or `teamwork` modes in plain text. The skill's `goal` modifier does not itself create a host-native persistent goal or invoke a native `/goal` command.
+
+Modes preserve the latest user scope, requested deliverable, host rules, and authorization. A plan-only request remains plan-only; a changed or canceled goal redirects or stops affected work. A mode does not add background execution or automatic continuation.
+
+Modes can be combined: `/teamwork` governs coordination, `/boost` deepens investigation and review, and `/goal` governs continued action and acceptance. Use one shared acceptance set, including any necessary lane checks; reuse still-current evidence instead of repeating checks for each mode. Load only requested modes. If a mode cannot be applied with the available tools or useful task boundaries, explain the limitation and continue feasible in-scope work without claiming that mode's missing behavior occurred.
